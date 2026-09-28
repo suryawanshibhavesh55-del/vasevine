@@ -623,11 +623,57 @@ function handlePlaceOrder(e) {
     return;
   }
 
+  const name = document.getElementById('checkoutName') ? document.getElementById('checkoutName').value.trim() : 'Customer';
+  const phone = document.getElementById('checkoutPhone') ? document.getElementById('checkoutPhone').value.trim() : '9876543210';
+  const email = document.getElementById('checkoutEmail') ? document.getElementById('checkoutEmail').value.trim() : '';
+  const address = document.getElementById('checkoutAddress') ? document.getElementById('checkoutAddress').value.trim() : '';
+
   const subtotal = cart.reduce((sum, i) => sum + i.product.price * i.qty, 0);
   const deliveryCharge = currentDeliveryInfo.deliveryCharge;
   const finalTotal = subtotal + deliveryCharge;
-  const orderNumber = 'VSV-' + Math.floor(100000 + Math.random() * 900000);
+  const orderNumber = 'VS' + Math.floor(10000 + Math.random() * 90000);
   const deliveryLocation = `${currentDeliveryInfo.city}, ${currentDeliveryInfo.state} (${currentDeliveryInfo.pincode})`;
+
+  // Record this order into customer orders store
+  const newOrder = {
+    id: orderNumber,
+    mobile: phone,
+    date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+    status: 'Order Placed',
+    estimatedDelivery: '3–5 business days',
+    items: cart.map(i => ({
+      productId: i.product.id,
+      productName: i.product.name,
+      image: i.product.images[0],
+      size: i.size,
+      quantity: i.qty,
+      price: i.product.price
+    })),
+    subtotal: subtotal,
+    delivery: deliveryCharge,
+    total: finalTotal,
+    customer: {
+      name: name,
+      phone: phone,
+      email: email,
+      address: address,
+      city: currentDeliveryInfo.city,
+      state: currentDeliveryInfo.state,
+      pincode: currentDeliveryInfo.pincode
+    },
+    timeline: [
+      { status: "Order Placed", date: "Just now", completed: true, current: true },
+      { status: "Order Confirmed", date: "Pending", completed: false },
+      { status: "Processing", date: "Pending", completed: false },
+      { status: "Shipped", date: "Pending", completed: false },
+      { status: "Out for Delivery", date: "Pending", completed: false },
+      { status: "Delivered", date: "Pending", completed: false }
+    ]
+  };
+
+  const storedOrders = JSON.parse(localStorage.getItem('vasevine_orders')) || [];
+  storedOrders.unshift(newOrder);
+  localStorage.setItem('vasevine_orders', JSON.stringify(storedOrders));
 
   cart = [];
   saveCart();
@@ -643,7 +689,7 @@ function handlePlaceOrder(e) {
         <div style="background:var(--bg-secondary); padding:1.25rem 2rem; display:inline-block; font-size:0.9rem; margin-bottom:1.75rem; text-align:left; border:1px solid var(--border-light); width:100%; max-width:440px;">
           <div style="display:flex; justify-content:space-between; margin-bottom:0.4rem;">
             <span style="color:var(--text-muted);">Order Number:</span>
-            <strong>${orderNumber}</strong>
+            <strong>#${orderNumber}</strong>
           </div>
           <div style="display:flex; justify-content:space-between; margin-bottom:0.4rem;">
             <span style="color:var(--text-muted);">Delivery To:</span>
@@ -659,8 +705,9 @@ function handlePlaceOrder(e) {
           </div>
         </div>
 
-        <div>
+        <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
           <button class="btn-primary" onclick="closeCheckoutModal()">RETURN TO HOMEPAGE</button>
+          <button class="btn-outline" onclick="closeCheckoutModal(); openOrderTrackingModal('${orderNumber}')">TRACK ORDER</button>
         </div>
       </div>
     `;
@@ -672,6 +719,420 @@ function closeCheckoutModal() {
   const overlay = document.getElementById('overlay');
   if (modal) modal.classList.remove('active');
   if (overlay) overlay.classList.remove('active');
+}
+
+/* =========================================================
+   Customer Profile, Order Lookup & Tracking System
+   ========================================================= */
+
+// Default mock orders for demo mobile number 9876543210
+const DEFAULT_DEMO_ORDERS = [
+  {
+    id: "VS10245",
+    mobile: "9876543210",
+    date: "28 September 2026",
+    status: "Shipped",
+    estimatedDelivery: "2–4 business days",
+    items: [
+      {
+        productId: "v-cp-002",
+        productName: "Champagne Gold Draped Saree Ensemble",
+        image: "assets/products/client_prod_002.jpg",
+        size: "M",
+        quantity: 1,
+        price: 4499
+      },
+      {
+        productId: "v-cp-005",
+        productName: "Coral Micro-Pleated Cocktail Dress",
+        image: "assets/products/client_prod_006.jpg",
+        size: "S",
+        quantity: 1,
+        price: 2699
+      }
+    ],
+    subtotal: 7198,
+    delivery: 500,
+    total: 7698,
+    customer: {
+      name: "Priya Sharma",
+      phone: "9876543210",
+      address: "102 Elegance Towers, MG Road",
+      city: "Mumbai",
+      state: "Maharashtra",
+      pincode: "400001"
+    },
+    timeline: [
+      { status: "Order Placed", date: "28 Sep, 10:15 AM", completed: true },
+      { status: "Order Confirmed", date: "28 Sep, 11:30 AM", completed: true },
+      { status: "Processing", date: "28 Sep, 04:00 PM", completed: true },
+      { status: "Shipped", date: "29 Sep, 09:45 AM", completed: true, current: true },
+      { status: "Out for Delivery", date: "Expected in 1–2 days", completed: false },
+      { status: "Delivered", date: "Expected in 2–4 days", completed: false }
+    ]
+  },
+  {
+    id: "VS10198",
+    mobile: "9876543210",
+    date: "14 September 2026",
+    status: "Delivered",
+    estimatedDelivery: "Delivered on 17 Sep 2026",
+    items: [
+      {
+        productId: "v-cp-001",
+        productName: "Crimson Sculpted Draped Set",
+        image: "assets/products/client_prod_001.jpg",
+        size: "L",
+        quantity: 1,
+        price: 3499
+      }
+    ],
+    subtotal: 3499,
+    delivery: 300,
+    total: 3799,
+    customer: {
+      name: "Priya Sharma",
+      phone: "9876543210",
+      address: "Flat 4B, Heritage Enclave, CP",
+      city: "Central Delhi",
+      state: "Delhi",
+      pincode: "110001"
+    },
+    timeline: [
+      { status: "Order Placed", date: "14 Sep, 02:20 PM", completed: true },
+      { status: "Order Confirmed", date: "14 Sep, 03:00 PM", completed: true },
+      { status: "Processing", date: "15 Sep, 10:00 AM", completed: true },
+      { status: "Shipped", date: "16 Sep, 08:30 AM", completed: true },
+      { status: "Out for Delivery", date: "17 Sep, 11:00 AM", completed: true },
+      { status: "Delivered", date: "17 Sep, 03:45 PM", completed: true, current: true }
+    ]
+  }
+];
+
+// Reusable order retrieval functions (Backend/API Compatible)
+function getAllOrders() {
+  const localOrders = JSON.parse(localStorage.getItem('vasevine_orders')) || [];
+  return [...localOrders, ...DEFAULT_DEMO_ORDERS];
+}
+
+function getOrdersByMobile(mobileNumber) {
+  const cleanMobile = String(mobileNumber || '').replace(/\D/g, '').slice(-10);
+  if (!cleanMobile) return [];
+  const allOrders = getAllOrders();
+  return allOrders.filter(o => String(o.mobile || '').replace(/\D/g, '').slice(-10) === cleanMobile);
+}
+
+function getOrderById(orderId) {
+  const cleanId = String(orderId || '').replace(/^#/, '').trim().toLowerCase();
+  const allOrders = getAllOrders();
+  return allOrders.find(o => String(o.id || '').replace(/^#/, '').trim().toLowerCase() === cleanId);
+}
+
+// Account Modal Open / Close
+function openAccountModal() {
+  const modal = document.getElementById('accountModal');
+  const overlay = document.getElementById('overlay');
+  if (!modal) return;
+
+  renderAccountLookupView();
+
+  modal.classList.add('active');
+  if (overlay) overlay.classList.add('active');
+}
+
+function closeAccountModal() {
+  const modal = document.getElementById('accountModal');
+  const overlay = document.getElementById('overlay');
+  if (modal) modal.classList.remove('active');
+  if (overlay) overlay.classList.remove('active');
+}
+
+// View 1: Lookup Form (Phone Input)
+function renderAccountLookupView(initialMobile = '') {
+  const container = document.getElementById('accountModalContent');
+  if (!container) return;
+
+  container.innerHTML = `
+    <button class="modal-close-btn" onclick="closeAccountModal()">&times;</button>
+    <div class="account-modal-body">
+      <div class="account-header">
+        <h2 class="account-title">My Account</h2>
+        <p class="account-subtitle">View your VASEVINE orders and track your deliveries.</p>
+      </div>
+
+      <form id="accountLookupForm" onsubmit="handleLookupOrders(event)" style="max-width: 420px; margin: 0 auto;">
+        <div style="margin-bottom: 1.5rem;">
+          <label style="display:block; font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem;">Mobile Number</label>
+          <div class="mobile-input-group">
+            <span class="mobile-prefix">+91</span>
+            <input 
+              type="tel" 
+              id="accountMobileInput" 
+              class="mobile-input-field" 
+              placeholder="Enter 10-digit mobile number" 
+              maxlength="10" 
+              inputmode="numeric" 
+              value="${initialMobile}"
+              oninput="this.value = this.value.replace(/\\D/g, '').slice(0, 10);"
+              required 
+            />
+          </div>
+          <div id="accountLookupError" style="color:#B3261E; font-size:0.82rem; margin-top:4px;"></div>
+        </div>
+
+        <button type="submit" class="btn-primary" style="width: 100%;">VIEW MY ORDERS</button>
+      </form>
+    </div>
+  `;
+
+  setTimeout(() => {
+    const input = document.getElementById('accountMobileInput');
+    if (input) input.focus();
+  }, 100);
+}
+
+// Handle Lookup Submit
+function handleLookupOrders(e) {
+  e.preventDefault();
+  const input = document.getElementById('accountMobileInput');
+  const errorEl = document.getElementById('accountLookupError');
+  const mobile = input ? input.value.trim() : '';
+
+  if (!/^\d{10}$/.test(mobile)) {
+    if (errorEl) errorEl.textContent = 'Please enter a valid 10-digit mobile number.';
+    return;
+  }
+
+  if (errorEl) errorEl.textContent = '';
+  const matchingOrders = getOrdersByMobile(mobile);
+
+  if (matchingOrders.length > 0) {
+    renderOrdersListView(mobile, matchingOrders);
+  } else {
+    renderNoOrdersView(mobile);
+  }
+}
+
+// View 2: Orders List
+function renderOrdersListView(mobile, orders) {
+  const container = document.getElementById('accountModalContent');
+  if (!container) return;
+
+  container.innerHTML = `
+    <button class="modal-close-btn" onclick="closeAccountModal()">&times;</button>
+    <div class="account-modal-body">
+      <button class="account-back-btn" onclick="renderAccountLookupView('${mobile}')">
+        &larr; Back to Account
+      </button>
+
+      <div class="account-header" style="text-align: left; margin-bottom: 1.75rem;">
+        <h2 class="account-title" style="font-size: 2rem;">My Orders</h2>
+        <p class="account-subtitle">Orders placed using +91 ${mobile}</p>
+      </div>
+
+      <div class="order-cards-list">
+        ${orders.map(order => {
+          const statusClass = (order.status || 'placed').toLowerCase().replace(/\s+/g, '-');
+          const totalQty = order.items.reduce((sum, item) => sum + item.quantity, 0);
+
+          return `
+            <div class="order-card" onclick="renderOrderDetailsView('${order.id}', '${mobile}')">
+              <div class="order-card-header">
+                <div>
+                  <span class="order-card-id">#${order.id}</span>
+                  <div class="order-card-date">Placed on ${order.date}</div>
+                </div>
+                <span class="order-status-pill ${statusClass}">${order.status}</span>
+              </div>
+
+              <div class="order-thumbs-row">
+                ${order.items.slice(0, 3).map(item => `
+                  <img src="${item.image}" alt="${item.productName}" class="order-thumb-img" />
+                `).join('')}
+                <div style="font-size: 0.85rem; color: var(--text-muted);">
+                  ${order.items[0].productName} ${order.items.length > 1 ? `+${order.items.length - 1} more` : ''}
+                  <div style="font-size:0.78rem; margin-top:2px;">${totalQty} Item${totalQty > 1 ? 's' : ''}</div>
+                </div>
+              </div>
+
+              <div class="order-card-footer">
+                <div class="order-card-total">₹${order.total.toLocaleString('en-IN')}</div>
+                <div style="display:flex; gap:12px;">
+                  <button class="order-action-link" onclick="event.stopPropagation(); renderOrderTrackingView('${order.id}', '${mobile}')">
+                    TRACK ORDER &rarr;
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+
+// View 3: Order Details
+function renderOrderDetailsView(orderId, fromMobile) {
+  const container = document.getElementById('accountModalContent');
+  const order = getOrderById(orderId);
+  if (!container || !order) return;
+
+  const statusClass = (order.status || 'placed').toLowerCase().replace(/\s+/g, '-');
+
+  container.innerHTML = `
+    <button class="modal-close-btn" onclick="closeAccountModal()">&times;</button>
+    <div class="account-modal-body">
+      <button class="account-back-btn" onclick="renderOrdersListView('${fromMobile}', getOrdersByMobile('${fromMobile}'))">
+        &larr; Back to My Orders
+      </button>
+
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem; padding-bottom:1rem; border-bottom:1px solid var(--border-light);">
+        <div>
+          <h2 class="account-title" style="font-size: 1.85rem; margin-bottom:0.25rem;">Order #${order.id}</h2>
+          <span style="font-size:0.85rem; color:var(--text-muted);">Placed on ${order.date}</span>
+        </div>
+        <span class="order-status-pill ${statusClass}" style="font-size:0.8rem; padding:5px 12px;">${order.status}</span>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <h4 style="font-family:var(--font-serif); font-size:1.15rem; margin-bottom:0.75rem;">Products Ordered</h4>
+        ${order.items.map(item => `
+          <div class="order-detail-item">
+            <img src="${item.image}" alt="${item.productName}" class="order-detail-img" />
+            <div style="flex:1; display:flex; flex-direction:column; justify-content:center;">
+              <h5 style="font-size:0.95rem; font-weight:500;">${item.productName}</h5>
+              <span style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">Size: ${item.size} | Qty: ${item.quantity}</span>
+              <span style="font-weight:600; font-size:0.95rem; margin-top:4px;">₹${(item.price * item.quantity).toLocaleString('en-IN')}</span>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="order-summary-box" style="margin-bottom:1.5rem;">
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span>₹${order.subtotal.toLocaleString('en-IN')}</span>
+        </div>
+        <div class="summary-row">
+          <span>Delivery</span>
+          <span>₹${order.delivery.toLocaleString('en-IN')}</span>
+        </div>
+        <div class="summary-row" style="border-top:1px solid var(--border-light); margin-top:0.5rem; padding-top:0.5rem; font-size:1.1rem; font-weight:700;">
+          <strong>Total Paid</strong>
+          <strong>₹${order.total.toLocaleString('en-IN')}</strong>
+        </div>
+      </div>
+
+      <div style="background-color:var(--bg-secondary); padding:1.25rem; border:1px solid var(--border-light); margin-bottom:1.5rem;">
+        <h5 style="font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.4rem; color:var(--text-muted);">Delivery Address</h5>
+        <div style="font-weight:600; font-size:0.95rem;">${order.customer.name}</div>
+        <div style="font-size:0.88rem; color:var(--text-main); margin-top:2px;">${order.customer.address}</div>
+        <div style="font-size:0.88rem; color:var(--text-muted);">${order.customer.city}, ${order.customer.state} — ${order.customer.pincode}</div>
+        <div style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;">Contact: +91 ${order.customer.phone}</div>
+      </div>
+
+      <div style="display:flex; gap:12px;">
+        <button class="btn-primary" style="flex:1;" onclick="renderOrderTrackingView('${order.id}', '${fromMobile}')">
+          TRACK ORDER &rarr;
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+// View 4: Order Tracking
+function renderOrderTrackingView(orderId, fromMobile) {
+  const container = document.getElementById('accountModalContent');
+  const order = getOrderById(orderId);
+  if (!container || !order) return;
+
+  const defaultTimeline = [
+    { status: "Order Placed", date: order.date, completed: true },
+    { status: "Order Confirmed", date: order.date, completed: true },
+    { status: "Processing", date: order.date, completed: true },
+    { status: "Shipped", date: "Expected in 1–2 days", completed: order.status === 'Shipped' || order.status === 'Out for Delivery' || order.status === 'Delivered', current: order.status === 'Shipped' },
+    { status: "Out for Delivery", date: "Expected Soon", completed: order.status === 'Out for Delivery' || order.status === 'Delivered', current: order.status === 'Out for Delivery' },
+    { status: "Delivered", date: "Expected in 2–4 days", completed: order.status === 'Delivered', current: order.status === 'Delivered' }
+  ];
+
+  const timeline = order.timeline || defaultTimeline;
+
+  container.innerHTML = `
+    <button class="modal-close-btn" onclick="closeAccountModal()">&times;</button>
+    <div class="account-modal-body">
+      <button class="account-back-btn" onclick="renderOrderDetailsView('${order.id}', '${fromMobile}')">
+        &larr; Back to Order Details
+      </button>
+
+      <div class="account-header" style="text-align: left; margin-bottom: 1.5rem;">
+        <span style="font-size:0.75rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--text-muted);">SHIPMENT TRACKING</span>
+        <h2 class="account-title" style="font-size: 2rem; margin-top:0.25rem;">Order #${order.id}</h2>
+        <p class="account-subtitle" style="color:var(--text-main); font-weight:500;">
+          Status: <strong>${order.status}</strong> &bull; ${order.estimatedDelivery || '2–4 business days'}
+        </p>
+      </div>
+
+      <div class="tracking-timeline-box">
+        <div class="tracking-timeline">
+          ${timeline.map(step => {
+            const isCompleted = step.completed;
+            const isCurrent = step.current;
+            const stepClass = isCompleted ? 'completed' : (isCurrent ? 'current' : '');
+
+            return `
+              <div class="tracking-step ${stepClass}">
+                <div class="tracking-icon-dot">
+                  ${isCompleted ? '✓' : (isCurrent ? '●' : '○')}
+                </div>
+                <div class="tracking-step-title">${step.status}</div>
+                <div class="tracking-step-date">${step.date}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+
+      <div style="background-color:var(--bg-secondary); padding:1rem 1.25rem; font-size:0.85rem; color:var(--text-muted); border:1px solid var(--border-light); margin-bottom:1.5rem;">
+        Shipment handled via VASEVINE Priority Logistics. Signature required upon delivery.
+      </div>
+
+      <button class="btn-outline" style="width:100%;" onclick="renderOrdersListView('${fromMobile}', getOrdersByMobile('${fromMobile}'))">
+        VIEW ALL ORDERS
+      </button>
+    </div>
+  `;
+}
+
+// View 5: No Orders Found
+function renderNoOrdersView(mobile) {
+  const container = document.getElementById('accountModalContent');
+  if (!container) return;
+
+  container.innerHTML = `
+    <button class="modal-close-btn" onclick="closeAccountModal()">&times;</button>
+    <div class="account-modal-body" style="text-align:center; padding: 3.5rem 2rem;">
+      <div style="width:60px; height:60px; border-radius:50%; background:var(--bg-secondary); border:1px solid var(--border-light); display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem auto; color:var(--text-muted);">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+      </div>
+
+      <h2 style="font-family:var(--font-serif); font-size:2rem; margin-bottom:0.75rem;">No orders found</h2>
+      <p style="color:var(--text-muted); font-size:0.95rem; max-width:360px; margin:0 auto 2rem auto; line-height:1.6;">
+        We couldn't find any VASEVINE orders associated with <strong>+91 ${mobile}</strong>.
+      </p>
+
+      <button class="btn-primary" onclick="renderAccountLookupView('${mobile}')" style="min-width:240px;">
+        TRY ANOTHER NUMBER
+      </button>
+    </div>
+  `;
+}
+
+// Standalone quick tracking helper (e.g. from checkout confirmation)
+function openOrderTrackingModal(orderId) {
+  const order = getOrderById(orderId);
+  const mobile = order ? order.mobile : '9876543210';
+  openAccountModal();
+  renderOrderTrackingView(orderId, mobile);
 }
 
 // Search Drawer / Overlay

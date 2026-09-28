@@ -1207,6 +1207,302 @@ img {
   font-style: italic;
 }
 
+/* =========================================================
+   Customer Account, Orders & Tracking System
+   ========================================================= */
+.account-modal {
+  max-width: 680px;
+  padding: 0;
+}
+
+.account-modal-body {
+  padding: 3rem 2.5rem;
+}
+
+.account-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.account-title {
+  font-family: var(--font-serif);
+  font-size: 2.25rem;
+  font-weight: 500;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
+}
+
+.account-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  font-weight: 300;
+}
+
+.account-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: var(--transition-smooth);
+}
+
+.account-back-btn:hover {
+  color: var(--text-main);
+}
+
+.mobile-input-group {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border-light);
+  background-color: #FFFFFF;
+  margin-bottom: 1.25rem;
+  transition: var(--transition-smooth);
+}
+
+.mobile-input-group:focus-within {
+  border-color: var(--text-main);
+}
+
+.mobile-prefix {
+  padding: 0.85rem 1rem;
+  background-color: var(--bg-secondary);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-main);
+  border-right: 1px solid var(--border-light);
+}
+
+.mobile-input-field {
+  flex: 1;
+  padding: 0.85rem 1rem;
+  border: none;
+  font-family: inherit;
+  font-size: 0.95rem;
+  outline: none;
+  background: transparent;
+}
+
+/* Order Cards List */
+.order-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.order-card {
+  border: 1px solid var(--border-light);
+  background-color: #FFFFFF;
+  padding: 1.5rem;
+  transition: var(--transition-smooth);
+  cursor: pointer;
+}
+
+.order-card:hover {
+  border-color: var(--text-main);
+  box-shadow: var(--shadow-subtle);
+}
+
+.order-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.order-card-id {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.order-card-date {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.order-status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.order-status-pill.shipped {
+  background-color: #EEF4FF;
+  color: #1A56DB;
+}
+
+.order-status-pill.delivered {
+  background-color: #EDFDF2;
+  color: #0E7036;
+}
+
+.order-status-pill.processing, .order-status-pill.confirmed {
+  background-color: #FFF8E6;
+  color: #925800;
+}
+
+.order-status-pill.placed {
+  background-color: var(--bg-secondary);
+  color: var(--text-main);
+}
+
+.order-thumbs-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.order-thumb-img {
+  width: 55px;
+  height: 70px;
+  object-fit: cover;
+  object-position: top center;
+  background-color: var(--bg-card);
+}
+
+.order-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-light);
+}
+
+.order-card-total {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.order-action-link {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-main);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: underline;
+}
+
+/* Order Details Products */
+.order-detail-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.order-detail-img {
+  width: 70px;
+  height: 90px;
+  object-fit: cover;
+  object-position: top center;
+}
+
+/* Tracking Timeline */
+.tracking-timeline-box {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-light);
+}
+
+.tracking-timeline {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin-left: 1.5rem;
+}
+
+.tracking-step {
+  position: relative;
+  padding-bottom: 2rem;
+  padding-left: 2rem;
+}
+
+.tracking-step:last-child {
+  padding-bottom: 0;
+}
+
+.tracking-step::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 18px;
+  bottom: 0;
+  width: 2px;
+  background-color: var(--border-light);
+}
+
+.tracking-step:last-child::before {
+  display: none;
+}
+
+.tracking-step.completed::before {
+  background-color: var(--text-main);
+}
+
+.tracking-icon-dot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--border-light);
+  background-color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: bold;
+}
+
+.tracking-step.completed .tracking-icon-dot {
+  border-color: var(--text-main);
+  background-color: var(--text-main);
+  color: #FFFFFF;
+}
+
+.tracking-step.current .tracking-icon-dot {
+  border-color: var(--text-main);
+  background-color: #FFFFFF;
+  box-shadow: 0 0 0 4px rgba(17, 17, 17, 0.15);
+}
+
+.tracking-step-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.tracking-step.completed .tracking-step-title,
+.tracking-step.current .tracking-step-title {
+  color: var(--text-main);
+}
+
+.tracking-step-date {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
 /* Search Bar Overlay */
 .search-modal {
   position: fixed;

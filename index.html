@@ -29,7 +29,7 @@
         <button id="searchIcon" class="icon-btn" aria-label="Search">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         </button>
-        <button class="icon-btn" aria-label="Account">
+        <button id="accountIcon" class="icon-btn" aria-label="Account" onclick="openAccountModal()">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
         </button>
         <button id="cartIcon" class="icon-btn" aria-label="Shopping Bag">
@@ -57,6 +57,7 @@
         <li><a href="#new-arrivals" onclick="document.getElementById('closeMobileMenu').click()">New Arrivals</a></li>
         <li><a href="#about" onclick="document.getElementById('closeMobileMenu').click()">About Us</a></li>
         <li><a href="#footer" onclick="document.getElementById('closeMobileMenu').click()">Contact</a></li>
+        <li style="border-top: 1px solid var(--border-color); padding-top: 1rem;"><a href="javascript:void(0)" onclick="document.getElementById('closeMobileMenu').click(); openAccountModal();">Track Orders / My Account</a></li>
       </ul>
     </div>
   </div>
@@ -278,6 +279,13 @@
     </div>
   </div>
 
+  <!-- Customer Account & Order Tracking Modal -->
+  <div id="accountModal" class="modal account-modal">
+    <div id="accountModalContent">
+      <!-- Dynamic Account / Orders / Tracking Loaded Here -->
+    </div>
+  </div>
+
   <!-- Live Search Overlay Modal -->
   <div id="searchModal" class="search-modal">
     <div class="container">
@@ -293,7 +301,7 @@
   </div>
 
   <!-- Global Dim Overlay -->
-  <div id="overlay" class="overlay" onclick="closeCartDrawer(); closeProductModal(); closeCheckoutModal(); document.getElementById('searchModal').classList.remove('active');"></div>
+  <div id="overlay" class="overlay" onclick="closeCartDrawer(); closeProductModal(); closeCheckoutModal(); closeAccountModal(); document.getElementById('searchModal').classList.remove('active');"></div>
 
   <!-- App Scripts -->
   <script src="js/products.js"></script>
