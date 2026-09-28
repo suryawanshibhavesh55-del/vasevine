@@ -21,7 +21,27 @@ document.addEventListener('DOMContentLoaded', () => {
   initCartDrawer();
   initCheckout();
   updateCartBadge();
+  loadLiveProducts();
 });
+
+// Load live products from Vercel Serverless / MongoDB API
+async function loadLiveProducts() {
+  try {
+    const res = await fetch('/api/products');
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.success && Array.isArray(data.products) && data.products.length > 0) {
+        // Update in-memory catalog with live MongoDB products
+        PRODUCTS.length = 0;
+        data.products.forEach(p => PRODUCTS.push(p));
+        renderBestSellers();
+        renderShopGrid();
+      }
+    }
+  } catch (err) {
+    console.warn('Live products fallback to static:', err);
+  }
+}
 
 // Navigation & Mobile Menu
 function initNavbar() {
@@ -675,6 +695,40 @@ function handlePlaceOrder(e) {
   storedOrders.unshift(newOrder);
   localStorage.setItem('vasevine_orders', JSON.stringify(storedOrders));
 
+  // Persist order to MongoDB through Vercel Serverless Function
+  try {
+    fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        customer: { name, mobile: phone, email },
+        shippingAddress: {
+          address,
+          city: currentDeliveryInfo.city,
+          state: currentDeliveryInfo.state,
+          pincode: currentDeliveryInfo.pincode
+        },
+        items: cart.map(i => ({
+          productId: i.product.id,
+          productName: i.product.name,
+          productImage: i.product.images[0],
+          size: i.size,
+          quantity: i.qty,
+          unitPrice: i.product.price
+        })),
+        subtotal: subtotal,
+        deliveryCharge: deliveryCharge,
+        total: finalTotal
+      })
+    }).then(r => r.json()).then(data => {
+      if (data && data.success) {
+        console.log('Order successfully saved to MongoDB:', data.orderId);
+      }
+    }).catch(err => {
+      console.warn('Notice: Order saved locally, API sync:', err.message);
+    });
+  } catch (e) {}
+
   cart = [];
   saveCart();
 
@@ -815,9 +869,56 @@ function getAllOrders() {
   return [...localOrders, ...DEFAULT_DEMO_ORDERS];
 }
 
-function getOrdersByMobile(mobileNumber) {
+async function getOrdersByMobile(mobileNumber) {
   const cleanMobile = String(mobileNumber || '').replace(/\D/g, '').slice(-10);
   if (!cleanMobile) return [];
+
+  // Query real MongoDB orders from Vercel Serverless API
+  try {
+    const res = await fetch(`/api/orders/customer/${cleanMobile}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.success && Array.isArray(data.orders) && data.orders.length > 0) {
+        // Map API order structure to UI format
+        return data.orders.map(o => ({
+          id: o.orderId,
+          mobile: o.customer?.mobile,
+          date: new Date(o.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+          status: o.orderStatus,
+          estimatedDelivery: o.orderStatus === 'Delivered' ? 'Delivered' : (o.orderStatus === 'Shipped' ? '1–2 business days' : '3–5 business days'),
+          items: (o.items || []).map(i => ({
+            productId: i.productId,
+            productName: i.productName,
+            image: i.productImage || 'assets/products/client_prod_001.jpg',
+            size: i.size,
+            quantity: i.quantity,
+            price: i.unitPrice
+          })),
+          subtotal: o.subtotal,
+          delivery: o.deliveryCharge,
+          total: o.total,
+          customer: {
+            name: o.customer?.name,
+            phone: o.customer?.mobile,
+            address: o.shippingAddress?.address,
+            city: o.shippingAddress?.city,
+            state: o.shippingAddress?.state,
+            pincode: o.shippingAddress?.pincode
+          },
+          timeline: (o.statusHistory || []).map(h => ({
+            status: h.status,
+            date: new Date(h.timestamp).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }),
+            completed: true,
+            current: h.status === o.orderStatus
+          }))
+        }));
+      }
+    }
+  } catch (err) {
+    console.warn('API customer order lookup fallback to local cache:', err);
+  }
+
+  // Fallback to local storage / demo orders
   const allOrders = getAllOrders();
   return allOrders.filter(o => String(o.mobile || '').replace(/\D/g, '').slice(-10) === cleanMobile);
 }
@@ -892,10 +993,11 @@ function renderAccountLookupView(initialMobile = '') {
 }
 
 // Handle Lookup Submit
-function handleLookupOrders(e) {
+async function handleLookupOrders(e) {
   e.preventDefault();
   const input = document.getElementById('accountMobileInput');
   const errorEl = document.getElementById('accountLookupError');
+  const submitBtn = e.target.querySelector('button[type="submit"]');
   const mobile = input ? input.value.trim() : '';
 
   if (!/^\d{10}$/.test(mobile)) {
@@ -904,12 +1006,26 @@ function handleLookupOrders(e) {
   }
 
   if (errorEl) errorEl.textContent = '';
-  const matchingOrders = getOrdersByMobile(mobile);
+  if (submitBtn) {
+    submitBtn.textContent = 'LOOKING UP ORDERS...';
+    submitBtn.disabled = true;
+  }
 
-  if (matchingOrders.length > 0) {
-    renderOrdersListView(mobile, matchingOrders);
-  } else {
-    renderNoOrdersView(mobile);
+  try {
+    const matchingOrders = await getOrdersByMobile(mobile);
+
+    if (matchingOrders.length > 0) {
+      renderOrdersListView(mobile, matchingOrders);
+    } else {
+      renderNoOrdersView(mobile);
+    }
+  } catch (err) {
+    if (errorEl) errorEl.textContent = 'Unable to fetch orders. Please try again.';
+  } finally {
+    if (submitBtn) {
+      submitBtn.textContent = 'VIEW MY ORDERS';
+      submitBtn.disabled = false;
+    }
   }
 }
 

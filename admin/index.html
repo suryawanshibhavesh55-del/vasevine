@@ -1,0 +1,322 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard â€” VASEVINE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="admin-navbar">
+    <div class="brand-wrapper">
+      <a href="/admin" class="admin-logo">VASEVINE</a>
+      <span class="admin-badge">Admin</span>
+    </div>
+
+    <div class="admin-nav-links">
+      <a href="/" target="_blank" class="store-link">View Storefront &rarr;</a>
+      <span id="adminUserGreeting" style="font-size:0.85rem; color:var(--text-muted);">Admin</span>
+      <button class="btn-logout" onclick="handleLogout()">LOGOUT</button>
+    </div>
+  </header>
+
+  <main class="admin-container">
+    <!-- Tab Controls -->
+    <nav class="tabs-bar">
+      <button class="tab-btn active" onclick="switchTab('dashboard')">Dashboard</button>
+      <button class="tab-btn" onclick="switchTab('orders')">Orders</button>
+      <button class="tab-btn" onclick="switchTab('products')">Products</button>
+      <button class="tab-btn" onclick="switchTab('inventory')">Inventory</button>
+    </nav>
+
+    <!-- TAB 1: DASHBOARD -->
+    <section id="tab-dashboard" class="tab-content">
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-label">Total Sales</div>
+          <div class="metric-value" id="statTotalSales">â‚¹0</div>
+          <div class="metric-note">Lifetime revenue</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Total Orders</div>
+          <div class="metric-value" id="statTotalOrders">0</div>
+          <div class="metric-note">Orders placed</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Pending Orders</div>
+          <div class="metric-value" id="statPendingOrders" style="color:#B45309;">0</div>
+          <div class="metric-note">Placed / Processing</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Shipped Orders</div>
+          <div class="metric-value" id="statShippedOrders" style="color:#1D4ED8;">0</div>
+          <div class="metric-note">In transit</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Delivered Orders</div>
+          <div class="metric-value" id="statDeliveredOrders" style="color:#15803D;">0</div>
+          <div class="metric-note">Successfully fulfilled</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Active Products</div>
+          <div class="metric-value" id="statTotalProducts">0</div>
+          <div class="metric-note">In store catalog</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Low Stock Items</div>
+          <div class="metric-value" id="statLowStock" style="color:#B91C1C;">0</div>
+          <div class="metric-note">&le; 5 units remaining</div>
+        </div>
+      </div>
+
+      <!-- Recent Orders Quick Preview -->
+      <div class="section-header">
+        <h3 class="section-title">Recent Orders</h3>
+        <button class="btn-outline" onclick="switchTab('orders')">View All Orders &rarr;</button>
+      </div>
+      <div class="data-table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Date</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="recentOrdersTableBody">
+            <tr><td colspan="6" style="text-align:center; padding:2rem; color:var(--text-muted);">Loading recent orders...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 2: ORDERS -->
+    <section id="tab-orders" class="tab-content" style="display:none;">
+      <div class="section-header">
+        <h3 class="section-title">Orders Management</h3>
+        <div class="controls-row">
+          <input type="text" id="orderSearchInput" class="search-input" placeholder="Search by Order ID, Name, Mobile..." oninput="debounceOrdersSearch()" />
+          <select id="orderStatusFilter" class="select-filter" onchange="fetchAdminOrders()">
+            <option value="all">All Statuses</option>
+            <option value="Order Placed">Order Placed</option>
+            <option value="Order Confirmed">Order Confirmed</option>
+            <option value="Processing">Processing</option>
+            <option value="Shipped">Shipped</option>
+            <option value="Out for Delivery">Out for Delivery</option>
+            <option value="Delivered">Delivered</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+          <button class="btn-outline" onclick="fetchAdminOrders()">Refresh</button>
+        </div>
+      </div>
+
+      <div class="data-table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer & Mobile</th>
+              <th>City, State</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Payment</th>
+              <th>Order Status</th>
+              <th>Manage</th>
+            </tr>
+          </thead>
+          <tbody id="adminOrdersTableBody">
+            <tr><td colspan="8" style="text-align:center; padding:2rem; color:var(--text-muted);">Loading orders...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 3: PRODUCTS -->
+    <section id="tab-products" class="tab-content" style="display:none;">
+      <div class="section-header">
+        <h3 class="section-title">Product Catalog</h3>
+        <div class="controls-row">
+          <select id="productCategoryFilter" class="select-filter" onchange="fetchAdminProducts()">
+            <option value="All">All Categories</option>
+            <option value="Cord Sets">Cord Sets</option>
+            <option value="Dresses">Dresses</option>
+            <option value="Drapes">Drapes</option>
+            <option value="Gowns">Gowns</option>
+            <option value="Anarkalis">Anarkalis</option>
+          </select>
+          <select id="productStatusFilter" class="select-filter" onchange="fetchAdminProducts()">
+            <option value="All">All Statuses</option>
+            <option value="active">Active</option>
+            <option value="draft">Draft</option>
+            <option value="archived">Archived</option>
+          </select>
+          <button class="btn-primary" onclick="openAddProductModal()">+ ADD PRODUCT</button>
+        </div>
+      </div>
+
+      <div class="data-table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Product Name</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="adminProductsTableBody">
+            <tr><td colspan="7" style="text-align:center; padding:2rem; color:var(--text-muted);">Loading products...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 4: INVENTORY -->
+    <section id="tab-inventory" class="tab-content" style="display:none;">
+      <div class="section-header">
+        <h3 class="section-title">Inventory Control</h3>
+        <div class="controls-row">
+          <button class="btn-outline" onclick="fetchAdminInventory()">Refresh Inventory</button>
+        </div>
+      </div>
+
+      <div class="data-table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Product Name</th>
+              <th>Category</th>
+              <th>Current Stock</th>
+              <th>Stock State</th>
+              <th>Quick Update</th>
+            </tr>
+          </thead>
+          <tbody id="adminInventoryTableBody">
+            <tr><td colspan="6" style="text-align:center; padding:2rem; color:var(--text-muted);">Loading inventory...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL 1: ORDER DETAILS & STATUS UPDATER -->
+  <div id="orderDetailModal" class="modal-overlay">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeOrderModal()">&times;</button>
+      <div id="orderModalContent"></div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: ADD / EDIT PRODUCT -->
+  <div id="productFormModal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 740px;">
+      <button class="modal-close" onclick="closeProductModal()">&times;</button>
+      <h3 id="productModalTitle" class="section-title" style="margin-bottom: 1.5rem;">Add New Product</h3>
+
+      <form id="productForm" onsubmit="handleSaveProduct(event)">
+        <input type="hidden" id="editProductId" />
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-bottom:1rem;">
+          <div>
+            <label class="form-label">Product Name *</label>
+            <input type="text" id="prodName" class="form-control" required placeholder="e.g. Sapphire Cord-Embroidered Draped Dress" />
+          </div>
+          <div>
+            <label class="form-label">Category *</label>
+            <select id="prodCategory" class="form-control" required>
+              <option value="Dresses">Dresses</option>
+              <option value="Cord Sets">Cord Sets</option>
+              <option value="Drapes">Drapes</option>
+              <option value="Gowns">Gowns</option>
+              <option value="Anarkalis">Anarkalis</option>
+              <option value="All Collections">All Collections</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:1rem; margin-bottom:1rem;">
+          <div>
+            <label class="form-label">Selling Price (â‚¹) *</label>
+            <input type="number" id="prodPrice" class="form-control" required min="1" placeholder="4499" />
+          </div>
+          <div>
+            <label class="form-label">Original Price (â‚¹)</label>
+            <input type="number" id="prodOriginalPrice" class="form-control" min="1" placeholder="5624" />
+          </div>
+          <div>
+            <label class="form-label">Stock Quantity *</label>
+            <input type="number" id="prodStock" class="form-control" required min="0" placeholder="15" />
+          </div>
+        </div>
+
+        <div style="margin-bottom:1rem;">
+          <label class="form-label">Fabric / Material</label>
+          <input type="text" id="prodFabric" class="form-control" placeholder="e.g. Liquid Satin & Embroidery" />
+        </div>
+
+        <div style="margin-bottom:1rem;">
+          <label class="form-label">Description</label>
+          <textarea id="prodDescription" class="form-control" rows="3" placeholder="Luxury product description..."></textarea>
+        </div>
+
+        <!-- Cloudinary Image Upload -->
+        <div style="margin-bottom:1.5rem;">
+          <label class="form-label">Product Images (Cloudinary)</label>
+          <div class="upload-dropzone" onclick="document.getElementById('cloudFileInput').click()">
+            <div style="font-size:0.9rem; font-weight:500;">Click to upload photos to Cloudinary</div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">JPG, PNG, WebP supported</div>
+            <input type="file" id="cloudFileInput" accept="image/*" style="display:none;" onchange="handleImageFileSelect(event)" />
+          </div>
+
+          <div style="display:flex; gap:8px; margin-bottom:0.75rem;">
+            <input type="text" id="prodManualImageUrl" class="form-control" placeholder="Or enter direct image URL / path" style="flex:1;" />
+            <button type="button" class="btn-outline" onclick="addManualImageUrl()">Add URL</button>
+          </div>
+
+          <div id="imagePreviewsContainer" class="uploaded-previews"></div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-bottom:1.5rem;">
+          <div>
+            <label class="form-label">Status</label>
+            <select id="prodStatus" class="form-control">
+              <option value="active">Active (Visible in Store)</option>
+              <option value="draft">Draft (Hidden)</option>
+              <option value="archived">Archived</option>
+            </select>
+          </div>
+          <div style="display:flex; gap:1.5rem; align-items:center; padding-top:1.5rem;">
+            <label style="display:flex; align-items:center; gap:6px; font-size:0.85rem; cursor:pointer;">
+              <input type="checkbox" id="prodBestseller" /> Bestseller
+            </label>
+            <label style="display:flex; align-items:center; gap:6px; font-size:0.85rem; cursor:pointer;">
+              <input type="checkbox" id="prodNewArrival" /> New Arrival
+            </label>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+          <button type="button" class="btn-outline" onclick="closeProductModal()">Cancel</button>
+          <button type="submit" class="btn-primary" id="saveProductBtn">SAVE PRODUCT</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="adminToast" class="admin-toast">Action completed</div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

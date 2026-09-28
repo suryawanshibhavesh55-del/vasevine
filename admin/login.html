@@ -1,0 +1,180 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login â€” VASEVINE Luxury Couture</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: #FAFAF7;
+      padding: 1.5rem;
+    }
+    .login-card {
+      background: #FFFFFF;
+      border: 1px solid #E5E5E0;
+      padding: 3.5rem 2.5rem;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.02);
+    }
+    .login-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      letter-spacing: 0.25em;
+      margin-bottom: 0.5rem;
+      color: #111111;
+    }
+    .login-subtitle {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: #767676;
+      margin-bottom: 2.5rem;
+    }
+    .login-form {
+      text-align: left;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.5rem;
+      color: #222222;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      border: 1px solid #D5D5CE;
+      background: #FFFFFF;
+      font-size: 0.95rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-control:focus {
+      border-color: #111111;
+    }
+    .btn-login {
+      width: 100%;
+      padding: 1rem;
+      background: #111111;
+      color: #FFFFFF;
+      border: 1px solid #111111;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 1rem;
+    }
+    .btn-login:hover {
+      background: #333333;
+    }
+    .login-error {
+      color: #B3261E;
+      font-size: 0.85rem;
+      margin-top: 1rem;
+      text-align: center;
+      display: none;
+    }
+    .back-store {
+      display: inline-block;
+      margin-top: 2rem;
+      font-size: 0.82rem;
+      color: #767676;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+    }
+    .back-store:hover {
+      color: #111111;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-card">
+    <div class="login-logo">VASEVINE</div>
+    <div class="login-subtitle">Operations & Admin Portal</div>
+
+    <form class="login-form" id="adminLoginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label class="form-label" for="username">Username</label>
+        <input type="text" id="username" class="form-control" placeholder="Enter admin username" required autofocus autocomplete="username" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input type="password" id="password" class="form-control" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" required autocomplete="current-password" />
+      </div>
+
+      <button type="submit" class="btn-login" id="loginBtn">SIGN IN TO ADMIN</button>
+      <div id="loginError" class="login-error"></div>
+    </form>
+
+    <a href="/" class="back-store">&larr; Return to Storefront</a>
+  </div>
+
+  <script>
+    // If already logged in, redirect to admin dashboard
+    fetch('/api/admin/me')
+      .then(r => r.json())
+      .then(d => {
+        if (d && d.authenticated) window.location.href = '/admin';
+      })
+      .catch(() => {});
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const userEl = document.getElementById('username');
+      const passEl = document.getElementById('password');
+      const errEl = document.getElementById('loginError');
+      const btn = document.getElementById('loginBtn');
+
+      errEl.style.display = 'none';
+      btn.textContent = 'AUTHENTICATING...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: userEl.value.trim(),
+            password: passEl.value
+          })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          window.location.href = '/admin';
+        } else {
+          errEl.textContent = data.error || 'Authentication failed. Please verify credentials.';
+          errEl.style.display = 'block';
+          btn.textContent = 'SIGN IN TO ADMIN';
+          btn.disabled = false;
+        }
+      } catch (err) {
+        errEl.textContent = 'Network error. Please try again.';
+        errEl.style.display = 'block';
+        btn.textContent = 'SIGN IN TO ADMIN';
+        btn.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>
