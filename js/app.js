@@ -47,24 +47,7 @@ function initNavbar() {
 
 // Render Category Banner / Cards (All Collections Focus)
 function renderCategories() {
-  const categoryContainer = document.getElementById('categoryGrid');
-  if (!categoryContainer) return;
-
-  // Single unified All Collections category card for now
-  categoryContainer.style.gridTemplateColumns = '1fr';
-  categoryContainer.innerHTML = `
-    <div class="category-card" onclick="filterByCategory('All Collections')" style="flex-direction:row; height:240px; align-items:center; background-color:var(--bg-secondary); overflow:hidden;">
-      <div style="flex:1; padding:3rem; text-align:left;">
-        <span class="eyebrow">VASEVINE COUTURE</span>
-        <h3 style="font-family:var(--font-serif); font-size:2.25rem; font-weight:500; margin:0.5rem 0;">All Collections</h3>
-        <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:1.5rem;">Explore all 39 statement client silhouettes — from sculpted metallic drapes to handcrafted kalidar ensembles.</p>
-        <span class="btn-primary" style="font-size:0.75rem; padding:0.6rem 1.5rem;">EXPLORE ALL PRODUCTS (${PRODUCTS.length})</span>
-      </div>
-      <div style="width:40%; height:100%;">
-        <img src="${PRODUCTS[1] ? PRODUCTS[1].images[0] : ''}" alt="All Collections" style="width:100%; height:100%; object-fit:cover; object-position:top center;" />
-      </div>
-    </div>
-  `;
+  // Handled cleanly via exact static markup in index.html matching design reference
 }
 
 // Render Best Sellers Section (4 Client Products)
