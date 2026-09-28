@@ -352,6 +352,68 @@ function removeCartItem(index) {
   saveCart();
 }
 
+// Current verified delivery info state
+let currentDeliveryInfo = null;
+
+// Centralized PIN code & Delivery Calculation Service
+async function calculateDeliveryCharge(pincode) {
+  const cleanPin = String(pincode || '').trim();
+  if (!/^\d{6}$/.test(cleanPin)) {
+    return {
+      isValid: false,
+      error: 'Please enter a valid 6-digit Indian PIN code.'
+    };
+  }
+
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
+    const response = await fetch(`https://api.postalpincode.in/pincode/${cleanPin}`, {
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+
+    if (!response.ok) throw new Error('Network error');
+    const data = await response.json();
+
+    if (data && data[0] && data[0].Status === 'Success' && data[0].PostOffice && data[0].PostOffice.length > 0) {
+      const po = data[0].PostOffice[0];
+      const state = (po.State || '').trim();
+      const district = (po.District || po.Name || '').trim();
+      const city = district;
+
+      // Delivery rules:
+      // Strictly check if State is "Delhi" -> ₹300
+      // Haryana/UP/Rajasthan NCR are NOT Delhi -> ₹500
+      // Mumbai -> ₹500
+      // Hyderabad -> ₹500
+      // All other valid locations -> ₹500
+      const isDelhi = state.toLowerCase() === 'delhi';
+      const deliveryCharge = isDelhi ? 300 : 500;
+
+      return {
+        isValid: true,
+        pincode: cleanPin,
+        city: city,
+        district: district,
+        state: state,
+        deliveryCharge: deliveryCharge,
+        isDelhi: isDelhi
+      };
+    } else {
+      return {
+        isValid: false,
+        error: 'Please enter a valid 6-digit Indian PIN code.'
+      };
+    }
+  } catch (err) {
+    return {
+      isValid: false,
+      error: 'Unable to verify PIN code. Please try again.'
+    };
+  }
+}
+
 // Checkout Flow Modal
 function initCheckout() {
   const checkoutBtn = document.getElementById('proceedCheckoutBtn');
@@ -375,6 +437,7 @@ function openCheckoutModal() {
     return;
   }
 
+  currentDeliveryInfo = null;
   const subtotal = cart.reduce((sum, i) => sum + i.product.price * i.qty, 0);
 
   container.innerHTML = `
@@ -390,9 +453,20 @@ function openCheckoutModal() {
             <span>₹${(i.product.price * i.qty).toLocaleString('en-IN')}</span>
           </div>
         `).join('')}
-        <div style="border-top:1px solid var(--border-light); margin-top:0.75rem; padding-top:0.75rem;" class="summary-row">
-          <strong>Total Amount</strong>
-          <strong>₹${subtotal.toLocaleString('en-IN')}</strong>
+        
+        <div style="border-top:1px solid var(--border-light); margin-top:0.75rem; padding-top:0.75rem;">
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span id="checkoutSubtotal">₹${subtotal.toLocaleString('en-IN')}</span>
+          </div>
+          <div class="summary-row">
+            <span id="checkoutDeliveryLabel">Delivery</span>
+            <span id="checkoutDeliveryAmount" style="color:var(--text-muted); font-size:0.85rem;">Enter PIN code</span>
+          </div>
+          <div class="summary-row" style="border-top:1px solid var(--border-light); margin-top:0.5rem; padding-top:0.5rem; font-size:1.15rem;">
+            <strong>Total</strong>
+            <strong id="checkoutTotalAmount">₹${subtotal.toLocaleString('en-IN')}</strong>
+          </div>
         </div>
       </div>
 
@@ -401,36 +475,40 @@ function openCheckoutModal() {
           <div class="form-row">
             <div class="form-group">
               <label>Full Name *</label>
-              <input type="text" required placeholder="Priya Sharma" class="form-control" />
+              <input type="text" id="checkoutName" required placeholder="Priya Sharma" class="form-control" />
             </div>
             <div class="form-group">
               <label>Phone Number *</label>
-              <input type="tel" required placeholder="+91 98765 43210" class="form-control" />
+              <input type="tel" id="checkoutPhone" required placeholder="+91 98765 43210" class="form-control" />
             </div>
           </div>
           <div class="form-group">
             <label>Email Address *</label>
-            <input type="email" required placeholder="priya@example.com" class="form-control" />
+            <input type="email" id="checkoutEmail" required placeholder="priya@example.com" class="form-control" />
           </div>
           <div class="form-group">
             <label>Shipping Address *</label>
-            <input type="text" required placeholder="102 Elegance Towers, MG Road" class="form-control" />
+            <input type="text" id="checkoutAddress" required placeholder="102 Elegance Towers, MG Road" class="form-control" />
           </div>
+          
+          <div class="form-group">
+            <label>PIN Code *</label>
+            <input type="text" id="checkoutPincode" required placeholder="Enter 6-digit PIN code" maxlength="6" inputmode="numeric" class="form-control" oninput="handlePincodeInput(this)" />
+            <div id="pincodeFeedback" class="pincode-feedback"></div>
+          </div>
+
           <div class="form-row">
             <div class="form-group">
               <label>City *</label>
-              <input type="text" required placeholder="Mumbai" class="form-control" />
+              <input type="text" id="checkoutCity" required placeholder="City / District" class="form-control" />
             </div>
             <div class="form-group">
               <label>State *</label>
-              <input type="text" required placeholder="Maharashtra" class="form-control" />
+              <input type="text" id="checkoutState" required placeholder="State" class="form-control" />
             </div>
           </div>
-          <div class="form-group">
-            <label>Pincode *</label>
-            <input type="text" required placeholder="400001" class="form-control" />
-          </div>
-          <button type="submit" class="btn-primary" style="margin-top:1rem; width:100%;">PLACE ORDER</button>
+
+          <button type="submit" id="placeOrderBtn" class="btn-primary" style="margin-top:0.5rem; width:100%;">PLACE ORDER</button>
         </div>
       </form>
     </div>
@@ -440,23 +518,147 @@ function openCheckoutModal() {
   overlay.classList.add('active');
 }
 
+let pincodeDebounceTimer = null;
+
+async function handlePincodeInput(inputEl) {
+  // Strip letters and special characters
+  inputEl.value = inputEl.value.replace(/\D/g, '').slice(0, 6);
+  const pin = inputEl.value.trim();
+
+  const feedbackEl = document.getElementById('pincodeFeedback');
+  const deliveryLabelEl = document.getElementById('checkoutDeliveryLabel');
+  const deliveryAmountEl = document.getElementById('checkoutDeliveryAmount');
+  const totalAmountEl = document.getElementById('checkoutTotalAmount');
+  const cityInput = document.getElementById('checkoutCity');
+  const stateInput = document.getElementById('checkoutState');
+  const subtotal = cart.reduce((sum, i) => sum + i.product.price * i.qty, 0);
+
+  if (pincodeDebounceTimer) {
+    clearTimeout(pincodeDebounceTimer);
+  }
+
+  // If less than 6 digits, reset location and delivery charge
+  if (pin.length < 6) {
+    currentDeliveryInfo = null;
+    if (feedbackEl) {
+      feedbackEl.className = 'pincode-feedback';
+      feedbackEl.textContent = pin.length > 0 ? 'Enter complete 6-digit PIN code' : '';
+    }
+    if (deliveryLabelEl) deliveryLabelEl.textContent = 'Delivery';
+    if (deliveryAmountEl) {
+      deliveryAmountEl.textContent = 'Enter PIN code';
+      deliveryAmountEl.style.color = 'var(--text-muted)';
+    }
+    if (totalAmountEl) {
+      totalAmountEl.textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+    }
+    return;
+  }
+
+  // Exactly 6 digits entered
+  if (feedbackEl) {
+    feedbackEl.className = 'pincode-feedback loading';
+    feedbackEl.textContent = 'Checking delivery availability...';
+  }
+
+  pincodeDebounceTimer = setTimeout(async () => {
+    const result = await calculateDeliveryCharge(pin);
+
+    // If user changed the PIN while request was in-flight, ignore
+    if (inputEl.value.trim() !== pin) return;
+
+    if (result.isValid) {
+      currentDeliveryInfo = result;
+
+      // Auto-fill city and state
+      if (cityInput && !cityInput.value) cityInput.value = result.city;
+      if (stateInput && !stateInput.value) stateInput.value = result.state;
+
+      if (feedbackEl) {
+        feedbackEl.className = 'pincode-feedback success';
+        feedbackEl.innerHTML = `
+          <div>✓ Delivery available to <strong>${result.city}, ${result.state}</strong></div>
+          <div style="font-weight:600; color:var(--text-main); margin-top:2px;">Delivery: ₹${result.deliveryCharge}</div>
+        `;
+      }
+
+      if (deliveryLabelEl) {
+        deliveryLabelEl.textContent = result.isDelhi ? 'Delivery (Delhi)' : 'Delivery (Standard)';
+      }
+      if (deliveryAmountEl) {
+        deliveryAmountEl.textContent = `₹${result.deliveryCharge.toLocaleString('en-IN')}`;
+        deliveryAmountEl.style.color = 'var(--text-main)';
+      }
+      if (totalAmountEl) {
+        const finalTotal = subtotal + result.deliveryCharge;
+        totalAmountEl.textContent = `₹${finalTotal.toLocaleString('en-IN')}`;
+      }
+    } else {
+      currentDeliveryInfo = null;
+      if (feedbackEl) {
+        feedbackEl.className = 'pincode-feedback error';
+        feedbackEl.textContent = result.error || 'Please enter a valid 6-digit Indian PIN code.';
+      }
+      if (deliveryLabelEl) deliveryLabelEl.textContent = 'Delivery';
+      if (deliveryAmountEl) {
+        deliveryAmountEl.textContent = 'Enter PIN code';
+        deliveryAmountEl.style.color = 'var(--text-muted)';
+      }
+      if (totalAmountEl) {
+        totalAmountEl.textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+      }
+    }
+  }, 250);
+}
+
 function handlePlaceOrder(e) {
   e.preventDefault();
+
+  const pincodeInput = document.getElementById('checkoutPincode');
+  if (!currentDeliveryInfo || !currentDeliveryInfo.isValid) {
+    alert('Please enter a valid 6-digit Indian PIN code to calculate delivery and proceed.');
+    if (pincodeInput) {
+      pincodeInput.focus();
+    }
+    return;
+  }
+
+  const subtotal = cart.reduce((sum, i) => sum + i.product.price * i.qty, 0);
+  const deliveryCharge = currentDeliveryInfo.deliveryCharge;
+  const finalTotal = subtotal + deliveryCharge;
   const orderNumber = 'VSV-' + Math.floor(100000 + Math.random() * 900000);
-  
+  const deliveryLocation = `${currentDeliveryInfo.city}, ${currentDeliveryInfo.state} (${currentDeliveryInfo.pincode})`;
+
   cart = [];
   saveCart();
 
   const container = document.getElementById('checkoutContent');
   if (container) {
     container.innerHTML = `
-      <div style="padding: 4rem 2rem; text-align:center;">
-        <div style="width:64px; height:64px; border-radius:50%; background:#111111; color:#FFFFFF; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem auto; font-size:2rem;">✓</div>
-        <h2 style="font-family:var(--font-serif); font-size:2.5rem; margin-bottom:0.5rem;">Order Placed Successfully</h2>
-        <p style="color:var(--text-muted); font-size:1.1rem; margin-bottom:1.5rem;">Thank you for shopping with VASEVINE.</p>
-        <div style="background:var(--bg-secondary); padding:1rem; display:inline-block; font-size:0.9rem; margin-bottom:2rem;">
-          Order Reference Number: <strong>${orderNumber}</strong>
+      <div style="padding: 3.5rem 2rem; text-align:center;">
+        <div style="width:64px; height:64px; border-radius:50%; background:#111111; color:#FFFFFF; display:flex; align-items:center; justify-content:center; margin:0 auto 1.25rem auto; font-size:2rem;">✓</div>
+        <h2 style="font-family:var(--font-serif); font-size:2.25rem; margin-bottom:0.5rem;">Order Placed Successfully</h2>
+        <p style="color:var(--text-muted); font-size:1rem; margin-bottom:1.5rem;">Thank you for shopping with VASEVINE.</p>
+        
+        <div style="background:var(--bg-secondary); padding:1.25rem 2rem; display:inline-block; font-size:0.9rem; margin-bottom:1.75rem; text-align:left; border:1px solid var(--border-light); width:100%; max-width:440px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.4rem;">
+            <span style="color:var(--text-muted);">Order Number:</span>
+            <strong>${orderNumber}</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.4rem;">
+            <span style="color:var(--text-muted);">Delivery To:</span>
+            <strong>${deliveryLocation}</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.4rem;">
+            <span style="color:var(--text-muted);">Delivery Charge:</span>
+            <strong>₹${deliveryCharge.toLocaleString('en-IN')}</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; border-top:1px solid var(--border-light); padding-top:0.5rem; margin-top:0.5rem; font-size:1.05rem;">
+            <strong>Total Paid:</strong>
+            <strong>₹${finalTotal.toLocaleString('en-IN')}</strong>
+          </div>
         </div>
+
         <div>
           <button class="btn-primary" onclick="closeCheckoutModal()">RETURN TO HOMEPAGE</button>
         </div>
