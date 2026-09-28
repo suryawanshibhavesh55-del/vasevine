@@ -1,7 +1,13 @@
-// VASEVINE — Frontend Application Logic
+// VASEVINE — Frontend Application Logic (Client Products Catalog)
 
+// Auto-clear cart if it contains old demo product IDs
 let cart = JSON.parse(localStorage.getItem('vasevine_cart')) || [];
-let activeCategory = 'All';
+if (cart.some(item => !item.product || item.product.id.startsWith('v-cs-') || item.product.id.startsWith('v-dr-') || item.product.id.startsWith('v-dp-') || item.product.id.startsWith('v-gw-') || item.product.id.startsWith('v-an-'))) {
+  cart = [];
+  localStorage.removeItem('vasevine_cart');
+}
+
+let activeCategory = 'All Collections';
 let selectedProduct = null;
 let selectedSize = 'M';
 let selectedQty = 1;
@@ -39,22 +45,29 @@ function initNavbar() {
   }
 }
 
-// Render Shop By Category (5 Categories)
+// Render Category Banner / Cards (All Collections Focus)
 function renderCategories() {
   const categoryContainer = document.getElementById('categoryGrid');
   if (!categoryContainer) return;
 
-  categoryContainer.innerHTML = CATEGORIES.map(cat => `
-    <div class="category-card" onclick="filterByCategory('${cat.name}')">
-      <div class="category-image-container">
-        <img src="${cat.image}" alt="${cat.name}" class="category-image" loading="lazy" />
+  // Single unified All Collections category card for now
+  categoryContainer.style.gridTemplateColumns = '1fr';
+  categoryContainer.innerHTML = `
+    <div class="category-card" onclick="filterByCategory('All Collections')" style="flex-direction:row; height:240px; align-items:center; background-color:var(--bg-secondary); overflow:hidden;">
+      <div style="flex:1; padding:3rem; text-align:left;">
+        <span class="eyebrow">VASEVINE COUTURE</span>
+        <h3 style="font-family:var(--font-serif); font-size:2.25rem; font-weight:500; margin:0.5rem 0;">All Collections</h3>
+        <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:1.5rem;">Explore all 39 statement client silhouettes — from sculpted metallic drapes to handcrafted kalidar ensembles.</p>
+        <span class="btn-primary" style="font-size:0.75rem; padding:0.6rem 1.5rem;">EXPLORE ALL PRODUCTS (${PRODUCTS.length})</span>
       </div>
-      <h3 class="category-name">${cat.name}</h3>
+      <div style="width:40%; height:100%;">
+        <img src="${PRODUCTS[1] ? PRODUCTS[1].images[0] : ''}" alt="All Collections" style="width:100%; height:100%; object-fit:cover; object-position:top center;" />
+      </div>
     </div>
-  `).join('');
+  `;
 }
 
-// Render Best Sellers Section (4 Items matching reference design)
+// Render Best Sellers Section (4 Client Products)
 function renderBestSellers() {
   const container = document.getElementById('bestSellersGrid');
   if (!container) return;
@@ -79,28 +92,22 @@ function renderBestSellers() {
   `).join('');
 }
 
-// Render All Collections Grid with Category Tabs
+// Render All Collections Grid
 function renderShopGrid() {
   const container = document.getElementById('shopGrid');
   const tabsContainer = document.getElementById('filterTabs');
   if (!container) return;
 
-  // Render Filter Tabs
-  const categoriesList = ['All', 'Cord Sets', 'Dresses', 'Drapes', 'Gowns', 'Anarkalis'];
+  // Single tab for All Collections
   if (tabsContainer) {
-    tabsContainer.innerHTML = categoriesList.map(cat => `
-      <button class="filter-tab ${cat === activeCategory ? 'active' : ''}" onclick="filterByCategory('${cat}')">
-        ${cat}
+    tabsContainer.innerHTML = `
+      <button class="filter-tab active" onclick="filterByCategory('All Collections')">
+        All Collections (${PRODUCTS.length})
       </button>
-    `).join('');
+    `;
   }
 
-  // Filter Products
-  const filtered = activeCategory === 'All' 
-    ? PRODUCTS 
-    : PRODUCTS.filter(p => p.category.toLowerCase() === activeCategory.toLowerCase());
-
-  container.innerHTML = filtered.map(product => `
+  container.innerHTML = PRODUCTS.map(product => `
     <div class="product-card" onclick="openProductModal('${product.id}')">
       <div class="product-image-box">
         <img src="${product.images[0]}" alt="${product.name}" class="product-image" loading="lazy" />
@@ -119,7 +126,7 @@ function renderShopGrid() {
 }
 
 function filterByCategory(category) {
-  activeCategory = category;
+  activeCategory = 'All Collections';
   renderShopGrid();
   const shopSection = document.getElementById('shop');
   if (shopSection) {
@@ -390,7 +397,7 @@ function openCheckoutModal() {
   container.innerHTML = `
     <button class="modal-close-btn" onclick="closeCheckoutModal()">&times;</button>
     <div style="padding: 2.5rem;">
-      <h2 style="font-family:var(--font-serif); font-size:2rem; margin-bottom:1.5rem; text-align:center;">Demo Checkout</h2>
+      <h2 style="font-family:var(--font-serif); font-size:2rem; margin-bottom:1.5rem; text-align:center;">Checkout</h2>
       
       <div class="order-summary-box">
         <h4 style="font-family:var(--font-serif); font-size:1.15rem; margin-bottom:0.75rem;">Order Summary</h4>
@@ -515,16 +522,15 @@ function initSearch() {
 
       const matches = PRODUCTS.filter(p => 
         p.name.toLowerCase().includes(query) || 
-        p.category.toLowerCase().includes(query) ||
         p.description.toLowerCase().includes(query)
       );
 
       resultsContainer.innerHTML = matches.map(p => `
         <div style="display:flex; align-items:center; gap:1rem; padding:0.75rem 0; border-bottom:1px solid var(--border-light); cursor:pointer;" onclick="openProductModal('${p.id}'); document.getElementById('searchModal').classList.remove('active');">
-          <img src="${p.images[0]}" style="width:50px; height:65px; object-fit:cover;" />
+          <img src="${p.images[0]}" style="width:50px; height:65px; object-fit:cover; object-position:top center;" />
           <div>
             <h5 style="font-size:0.9rem;">${p.name}</h5>
-            <span style="font-size:0.8rem; color:var(--text-muted);">${p.category} — ₹${p.price.toLocaleString('en-IN')}</span>
+            <span style="font-size:0.8rem; color:var(--text-muted);">₹${p.price.toLocaleString('en-IN')}</span>
           </div>
         </div>
       `).join('');

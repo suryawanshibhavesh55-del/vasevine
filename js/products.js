@@ -1,468 +1,912 @@
-// VASEVINE Product Catalog Data
+﻿// VASEVINE â€” Product Catalog Data (100% Client Products)
 
 const CATEGORIES = [
   {
-    id: 'cord-sets',
-    name: 'Cord Sets',
-    image: 'assets/products/cord_set_crimson.jpeg',
-    description: 'Sophisticated two-piece tailored sets blending modern silhouettes with luxurious detailing.'
-  },
-  {
-    id: 'dresses',
-    name: 'Dresses',
-    image: 'assets/products/dress_coral_pleated.jpeg',
-    description: 'Couture dresses featuring hand-sculpted pleats and contemporary editorial shapes.'
-  },
-  {
-    id: 'drapes',
-    name: 'Drapes',
-    image: 'assets/products/drape_champagne_hero.jpeg',
-    description: 'Avant-garde saree drapes and sculpted drapes reimagined for celebratory evenings.'
-  },
-  {
-    id: 'gowns',
-    name: 'Gowns',
-    image: 'assets/products/gown_charcoal_grey.jpeg',
-    description: 'Floor-sweeping evening gowns with regal embellishments and fluid metallic drapes.'
-  },
-  {
-    id: 'anarkalis',
-    name: 'Anarkalis',
-    image: 'assets/products/anarkali_white_main.jpeg',
-    description: 'Timeless flared silhouettes with intricate gold threadwork and delicate dupattas.'
+    id: 'all-collections',
+    name: 'All Collections',
+    image: '',
+    description: 'Explore the complete luxury couture collection from VASEVINE.'
   }
 ];
 
 const PRODUCTS = [
-  {
-    id: 'v-cs-01',
-    name: 'Crimson Sculpted Cord Set',
-    category: 'Cord Sets',
-    price: 3499,
-    originalPrice: 4200,
-    isBestseller: true,
-    isNewArrival: false,
-    images: [
-      'assets/products/cord_set_crimson.jpeg'
-    ],
-    description: 'Crafted in structured rich crimson wool-crepe, featuring exaggerated sculpted shoulder drapes and flare trousers for an empowering power-dressing silhouette.',
-    fabric: 'Wool Crepe & Structured Satin',
-    sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL']
-  },
-  {
-    id: 'v-cs-02',
-    name: 'Royal Blue Power Cord Set',
-    category: 'Cord Sets',
-    price: 3999,
-    originalPrice: 4800,
-    isBestseller: false,
-    isNewArrival: true,
-    images: [
-      'assets/products/cord_set_royal_blue.jpeg'
-    ],
-    description: 'An architectural cobalt blue jacket set with micro-pleated wing shoulders paired with tailored flared pants.',
-    fabric: 'Poly-Silk Blend',
-    sizes: ['XS', 'S', 'M', 'L', 'XL']
-  },
-  {
-    id: 'v-cs-03',
-    name: 'Noir Silver Sculpted Cord Set',
-    category: 'Cord Sets',
-    price: 3799,
-    originalPrice: 4500,
-    isBestseller: false,
-    isNewArrival: false,
-    images: [
-      'assets/products/cord_set_noir_silver.jpeg'
-    ],
-    description: 'Dramatic black velvet flared trousers paired with a metallic silver sculpted corset top, designed for gala dinners.',
-    fabric: 'Italian Velvet & Metallic Lurex',
-    sizes: ['S', 'M', 'L', 'XL']
-  },
-  {
-    id: 'v-cs-04',
-    name: 'Metallic Sculpted Velvet Set',
-    category: 'Cord Sets',
-    price: 3299,
-    originalPrice: 3999,
-    isBestseller: false,
-    isNewArrival: false,
-    images: [
-      'assets/products/cord_set_metallic_velvet.jpeg'
-    ],
-    description: 'High-contrast metallic corsetry paired with fluid velvet trousers or mini skirts.',
-    fabric: 'Pleated Lurex & Micro-velvet',
-    sizes: ['XS', 'S', 'M', 'L']
-  },
-  {
-    id: 'v-cs-05',
-    name: 'Floral Printed Cord Set',
-    category: 'Cord Sets',
-    price: 2299,
-    originalPrice: 2899,
-    isBestseller: true,
-    isNewArrival: false,
-    images: [
-      'assets/products/cord_set_floral.jpeg'
-    ],
-    description: 'Lightweight printed co-ord set with effortless collar detailing and relaxed pants, perfect for day soirées.',
-    fabric: 'Pure Modal Satin',
-    sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL']
-  },
-  {
-    id: 'v-dr-01',
-    name: 'Ivory Pearl Drape Dress',
-    category: 'Dresses',
-    price: 2899,
-    originalPrice: 3500,
-    isBestseller: false,
-    isNewArrival: true,
-    images: [
-      'assets/products/dress_white_pearl_main.jpeg',
-      'assets/products/dress_white_pearl_1.jpeg',
-      'assets/products/dress_white_pearl_2.jpeg'
-    ],
-    description: 'Fluid ivory organza mini dress adorned with delicate freshwater pearl droplets and 3D architectural body drapes.',
-    fabric: 'Pleated Organza & Pearls',
-    sizes: ['XS', 'S', 'M', 'L']
-  },
-  {
-    id: 'v-dr-02',
-    name: 'Coral Pleated Sculpted Mini Dress',
-    category: 'Dresses',
-    price: 2499,
-    originalPrice: 2999,
-    isBestseller: false,
-    isNewArrival: false,
-    images: [
-      'assets/products/dress_coral_mini.jpeg',
-      'assets/products/dress_coral_pleated.jpeg'
-    ],
-    description: 'Vibrant coral pink dress crafted in micro-pleated organza with asymmetric shoulder accents.',
-    fabric: 'Micro-Pleated Organza',
-    sizes: ['S', 'M', 'L']
-  },
-  {
-    id: 'v-dr-03',
-    name: 'Fuchsia Sculpted Cocktail Dress',
-    category: 'Dresses',
-    price: 2699,
-    originalPrice: 3299,
-    isBestseller: false,
-    isNewArrival: false,
-    images: [
-      'assets/products/dress_fuchsia_cocktail.jpeg'
-    ],
-    description: 'Electric pink sculpted cocktail dress with dramatic off-shoulder butterfly drapes.',
-    fabric: 'Chiffon Satin Blend',
-    sizes: ['XS', 'S', 'M', 'L']
-  },
-  {
-    id: 'v-dr-04',
-    name: 'Pastel Sculpted Resort Dress',
-    category: 'Dresses',
-    price: 2799,
-    originalPrice: 3400,
-    isBestseller: false,
-    isNewArrival: true,
-    images: [
-      'assets/products/dress_pastel_resort.jpeg'
-    ],
-    description: 'Sun-drenched mint blue and soft yellow pleated resort dress designed for tropical getaways.',
-    fabric: 'Dual-Tone Georgette',
-    sizes: ['XS', 'S', 'M', 'L', 'XL']
-  },
-  {
-    id: 'v-dr-05',
-    name: 'Ivory Sculpted Corset Dress',
-    category: 'Dresses',
-    price: 2999,
-    originalPrice: 3600,
-    isBestseller: false,
-    isNewArrival: false,
-    images: [
-      'assets/products/dress_ivory_corset.jpeg'
-    ],
-    description: 'Pure cream corset dress featuring swirling wave drapes and subtle sheer panels.',
-    fabric: 'Silk Organza & Tulle',
-    sizes: ['S', 'M', 'L']
-  },
-  {
-    id: 'v-dr-06',
-    name: 'Blush Pink Sculpted Mini Dress',
-    category: 'Dresses',
-    price: 2599,
-    originalPrice: 3100,
-    isBestseller: false,
-    isNewArrival: false,
-    images: [
-      'assets/products/dress_blush_sculpted.jpeg'
-    ],
-    description: 'Soft rose-pink sculpted dress with sweeping off-shoulder drape loops.',
-    fabric: 'Pleated Chiffon',
-    sizes: ['XS', 'S', 'M', 'L']
-  },
-  {
-    id: 'v-dr-07',
-    name: 'Gold Sequin Sculpted Bustier Dress',
-    category: 'Dresses',
-    price: 3199,
-    originalPrice: 3800,
-    isBestseller: false,
-    isNewArrival: false,
-    images: [
-      'assets/products/dress_sequin_gold_1.jpeg',
-      'assets/products/dress_sequin_gold_2.jpeg',
-      'assets/products/dress_sequin_gold_3.jpeg'
-    ],
-    description: 'Gilded sequin mini dress with an oversized pleated infinity swirl overlay across the bust.',
-    fabric: 'Sequin Mesh & Lurex',
-    sizes: ['S', 'M', 'L']
-  },
-  {
-    id: 'v-dr-08',
-    name: 'Royal Blue Beaded Cocktail Dress',
-    category: 'Dresses',
-    price: 2999,
-    originalPrice: 3600,
-    isBestseller: false,
-    isNewArrival: false,
-    images: [
-      'assets/products/dress_royal_blue_beaded.jpeg'
-    ],
-    description: 'Intricately hand-beaded royal blue dress featuring a sculpted fan neckline.',
-    fabric: 'Beaded Net & Georgette',
-    sizes: ['XS', 'S', 'M', 'L']
-  },
-  {
-    id: 'v-dp-01',
-    name: 'Champagne Metallic Draped Saree Gown',
-    category: 'Drapes',
-    price: 4499,
-    originalPrice: 5500,
-    isBestseller: true,
-    isNewArrival: true,
-    images: [
-      'assets/products/drape_champagne_hero.jpeg',
-      'assets/products/drape_gold_model_full.jpeg',
-      'assets/products/drape_gold_model_detail.jpeg'
-    ],
-    description: 'Exquisite metallic champagne gold draped saree gown featuring a sculpted pleated pallu with structured architectural bodice folds.',
-    fabric: 'Metallic Foil Georgette',
-    sizes: ['XS', 'S', 'M', 'L', 'XL']
-  },
-  {
-    id: 'v-dp-02',
-    name: 'Sculpted Metallic Evening Draped Gown',
-    category: 'Drapes',
-    price: 3999,
-    originalPrice: 4800,
-    isBestseller: false,
-    isNewArrival: false,
-    images: [
-      'assets/products/drape_metallic_evening.jpeg'
-    ],
-    description: 'Black mermaid skirt combined with a bronze sculpted asymmetric drape bodice for red carpet events.',
-    fabric: 'Metallic Lurex & Satin Lycra',
-    sizes: ['S', 'M', 'L', 'XL']
-  },
-  {
-    id: 'v-dp-03',
-    name: 'Sculpted Crimson Drape Gown',
-    category: 'Drapes',
-    price: 4299,
-    originalPrice: 5200,
-    isBestseller: false,
-    isNewArrival: false,
-    images: [
-      'assets/products/drape_crimson_trail.jpeg'
-    ],
-    description: 'Fiery red pre-draped gown featuring a dramatic floor-length waterfall trail.',
-    fabric: 'Satin & Micro-Pleated Chiffon',
-    sizes: ['XS', 'S', 'M', 'L']
-  },
-  {
-    id: 'v-dp-04',
-    name: 'Olive & Black Draped Couture Dress',
-    category: 'Drapes',
-    price: 3899,
-    originalPrice: 4600,
-    isBestseller: false,
-    isNewArrival: false,
-    images: [
-      'assets/products/drape_olive_black.jpeg',
-      'assets/products/drape_olive_black_2.jpeg'
-    ],
-    description: 'Olive green sequin bustier draped with a sweeping side satin trail over a noir column skirt.',
-    fabric: 'Sequin Embroidery & Satin',
-    sizes: ['S', 'M', 'L', 'XL']
-  },
-  {
-    id: 'v-dp-05',
-    name: 'Drape Saree Set',
-    category: 'Drapes',
-    price: 2999,
-    originalPrice: 3800,
-    isBestseller: true,
-    isNewArrival: false,
-    images: [
-      'assets/products/drape_wine_saree.jpeg'
-    ],
-    description: 'Deep wine pre-stitched draped saree with a geometric cord-embroidered crop blouse.',
-    fabric: 'Liquid Satin & Cord Embroidery',
-    sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL']
-  },
-  {
-    id: 'v-dp-06',
-    name: 'Ombre Blue Pleated Draped Top',
-    category: 'Drapes',
-    price: 2999,
-    originalPrice: 3500,
-    isBestseller: false,
-    isNewArrival: false,
-    images: [
-      'assets/products/drape_ombre_blue_top.jpeg'
-    ],
-    description: 'Azure sky blue and cream gradient pleated drape top designed to style with sarees or trousers.',
-    fabric: 'Gradated Micro-Pleated Chiffon',
-    sizes: ['XS', 'S', 'M', 'L']
-  },
-  {
-    id: 'v-gw-01',
-    name: 'Elegant Gown',
-    category: 'Gowns',
-    price: 3799,
-    originalPrice: 4500,
-    isBestseller: true,
-    isNewArrival: false,
-    images: [
-      'assets/products/gown_charcoal_grey.jpeg'
-    ],
-    description: 'Refined charcoal grey metallic gown with criss-cross bodice drapes and a fluid floor-length skirt.',
-    fabric: 'Metallic Tissue Georgette',
-    sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL']
-  },
-  {
-    id: 'v-gw-02',
-    name: 'Gold & Bronze Shimmer Draped Gown',
-    category: 'Gowns',
-    price: 4899,
-    originalPrice: 5900,
-    isBestseller: false,
-    isNewArrival: true,
-    images: [
-      'assets/products/gown_gold_bronze_shimmer.jpeg'
-    ],
-    description: 'Opulent dual gold and bronze shimmering gown featuring hand-beaded neckline borders and a flared trail.',
-    fabric: 'Lurex Tissue & Crystal Embroidery',
-    sizes: ['S', 'M', 'L', 'XL']
-  },
-  {
-    id: 'v-gw-03',
-    name: 'Black & Gold Lattice Peplum Gown',
-    category: 'Gowns',
-    price: 4299,
-    originalPrice: 5100,
-    isBestseller: false,
-    isNewArrival: false,
-    images: [
-      'assets/products/gown_black_gold_lattice.jpeg'
-    ],
-    description: 'Sculpted peplum gown with geometric gold grid embroidery and off-shoulder shoulder drapes.',
-    fabric: 'Raw Silk & Gold Zari Thread',
-    sizes: ['S', 'M', 'L', 'XL']
-  },
-  {
-    id: 'v-gw-04',
-    name: 'Ivory Sculpted Asymmetric Gown',
-    category: 'Gowns',
-    price: 4199,
-    originalPrice: 4999,
-    isBestseller: false,
-    isNewArrival: false,
-    images: [
-      'assets/products/gown_ivory_asymmetric.jpeg'
-    ],
-    description: 'Creamy ivory couture gown with an asymmetric high-slit skirt and draped waist knot.',
-    fabric: 'Pleated Satin',
-    sizes: ['XS', 'S', 'M', 'L']
-  },
-  {
-    id: 'v-gw-05',
-    name: 'Scarlet Red High-Low Satin Gown',
-    category: 'Gowns',
-    price: 4599,
-    originalPrice: 5400,
-    isBestseller: false,
-    isNewArrival: false,
-    images: [
-      'assets/products/gown_scarlet_high_low.jpeg'
-    ],
-    description: 'Vibrant scarlet satin ballgown with a high-low hemline and pleated bodice detailing.',
-    fabric: 'Heavy Satin & Micro-Pleated Chiffon',
-    sizes: ['S', 'M', 'L', 'XL']
-  },
-  {
-    id: 'v-an-01',
-    name: 'Embroidered Anarkali Set',
-    category: 'Anarkalis',
-    price: 3499,
-    originalPrice: 4200,
-    isBestseller: true,
-    isNewArrival: false,
-    images: [
-      'assets/products/anarkali_white_main.jpeg',
-      'assets/products/anarkali_ivory_detail.jpeg'
-    ],
-    description: 'Golden ivory flared Anarkali embellished with delicate badla threadwork, paired with an embroidered organza dupatta.',
-    fabric: 'Georgette & Organza',
-    sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL']
-  },
-  {
-    id: 'v-an-02',
-    name: 'Blush Pink Embroidered Anarkali',
-    category: 'Anarkalis',
-    price: 3999,
-    originalPrice: 4800,
-    isBestseller: false,
-    isNewArrival: true,
-    images: [
-      'assets/products/anarkali_blush_banner.jpeg'
-    ],
-    description: 'Fresh blush pink kalidar Anarkali with subtle gota patti border highlights and lightweight net dupatta.',
-    fabric: 'Mulmul Silk & Net',
-    sizes: ['XS', 'S', 'M', 'L', 'XL']
-  },
-  {
-    id: 'v-an-03',
-    name: 'Sapphire Sculpted Evening Dress',
-    category: 'Dresses',
-    price: 3299,
-    originalPrice: 3999,
-    isBestseller: false,
-    isNewArrival: false,
-    images: [
-      'assets/products/dress_sapphire_beaded.jpeg'
-    ],
-    description: 'Deep sapphire blue beaded midi dress with a swooping sculpted bodice wrap.',
-    fabric: 'Sequined Lace & Chiffon',
-    sizes: ['S', 'M', 'L']
-  },
-  {
-    id: 'v-an-04',
-    name: 'Gunmetal Metallic Sculpted Dress',
-    category: 'Dresses',
-    price: 3399,
-    originalPrice: 4100,
-    isBestseller: false,
-    isNewArrival: false,
-    images: [
-      'assets/products/dress_gunmetal_sculpted.jpeg'
-    ],
-    description: 'Gunmetal metallic textured cocktail dress featuring a dramatic chest swirl drape.',
-    fabric: 'Metallic Lurex Tissue',
-    sizes: ['XS', 'S', 'M', 'L']
-  }
+    {
+        "originalPrice":  4269,
+        "id":  "v-cp-01",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  3499,
+        "fabric":  "Structured Wool Crepe",
+        "category":  "All Collections",
+        "description":  "A dramatic statement crimson ensemble featuring a sculpted cape draped bodice paired with sleek tailored trousers.",
+        "isBestseller":  true,
+        "images":  [
+                       "assets/products/client_prod_01_1.jpg"
+                   ],
+        "name":  "Crimson Sculpted Draped Set",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  5489,
+        "id":  "v-cp-02",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  4499,
+        "fabric":  "Metallic Foil Georgette",
+        "category":  "All Collections",
+        "description":  "Sculpted champagne gold metallic drape featuring micro-pleated bodice folds and a flowing pallu.",
+        "isBestseller":  true,
+        "images":  [
+                       "assets/products/client_prod_02_1.jpg",
+                       "assets/products/client_prod_02_2.jpg",
+                       "assets/products/client_prod_02_3.jpg"
+                   ],
+        "name":  "Champagne Gold Draped Saree Ensemble",
+        "isNewArrival":  true
+    },
+    {
+        "originalPrice":  4879,
+        "id":  "v-cp-03",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  3999,
+        "fabric":  "Mulmul Silk \u0026 Organza",
+        "category":  "All Collections",
+        "description":  "Handcrafted blush pink kalidar set with micro-pleated wing shoulder detailing and a sheer organza dupatta.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_03_1.jpg",
+                       "assets/products/client_prod_03_2.jpg",
+                       "assets/products/client_prod_03_3.jpg",
+                       "assets/products/client_prod_03_4.jpg"
+                   ],
+        "name":  "Blush Pink Sculpted Anarkali",
+        "isNewArrival":  true
+    },
+    {
+        "originalPrice":  3537,
+        "id":  "v-cp-04",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  2899,
+        "fabric":  "Pleated Organza \u0026 Pearls",
+        "category":  "All Collections",
+        "description":  "Sculpted ivory organza mini dress adorned with delicate pearl accents and architectural body drapes.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_04_1.jpg",
+                       "assets/products/client_prod_04_2.jpg",
+                       "assets/products/client_prod_04_3.jpg",
+                       "assets/products/client_prod_04_4.jpg"
+                   ],
+        "name":  "Ivory Pearl Organza Dress",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  3293,
+        "id":  "v-cp-05",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  2699,
+        "fabric":  "Micro-Pleated Organza",
+        "category":  "All Collections",
+        "description":  "Vibrant coral pink cocktail dress crafted with pleated fan drapes and an asymmetric hemline.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_05_1.jpg",
+                       "assets/products/client_prod_05_2.jpg"
+                   ],
+        "name":  "Coral Micro-Pleated Cocktail Dress",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  4635,
+        "id":  "v-cp-06",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  3799,
+        "fabric":  "Italian Velvet \u0026 Lurex",
+        "category":  "All Collections",
+        "description":  "High-contrast evening ensemble with a metallic silver sculpted top and flared noir velvet trousers.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_06_1.jpg",
+                       "assets/products/client_prod_06_2.jpg"
+                   ],
+        "name":  "Noir Silver Velvet Corset Set",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  3415,
+        "id":  "v-cp-07",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  2799,
+        "fabric":  "Dual-Tone Georgette",
+        "category":  "All Collections",
+        "description":  "Sun-drenched dual-tone resort dress featuring pleated seafoam green and soft yellow drapes.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_07_1.jpg",
+                       "assets/products/client_prod_07_2.jpg"
+                   ],
+        "name":  "Pastel Mint \u0026 Yellow Resort Dress",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  3659,
+        "id":  "v-cp-08",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  2999,
+        "fabric":  "Chiffon Satin Blend",
+        "category":  "All Collections",
+        "description":  "Bold magenta dress featuring off-shoulder sculpted butterfly sleeves and structured waist drapes.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_08_1.jpg"
+                   ],
+        "name":  "Fuchsia Butterfly Sculpted Dress",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  4879,
+        "id":  "v-cp-09",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  3999,
+        "fabric":  "Poly-Silk Blend",
+        "category":  "All Collections",
+        "description":  "Cobalt blue tailored jacket set with structured micro-pleated shoulders and flare pants.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_09_1.jpg",
+                       "assets/products/client_prod_09_2.jpg",
+                       "assets/products/client_prod_09_3.jpg"
+                   ],
+        "name":  "Royal Blue Power Suit Set",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  3171,
+        "id":  "v-cp-10",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  2599,
+        "fabric":  "Pleated Chiffon",
+        "category":  "All Collections",
+        "description":  "Rose-pink micro-pleated mini dress with fluid shoulder loops and body-contouring drapes.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_10_1.jpg",
+                       "assets/products/client_prod_10_2.jpg"
+                   ],
+        "name":  "Sculpted Rose Pink Mini Dress",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  5977,
+        "id":  "v-cp-11",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  4899,
+        "fabric":  "Lurex Tissue \u0026 Crystals",
+        "category":  "All Collections",
+        "description":  "Dual-tone gold shimmer evening gown with crystal-embellished portrait neckline.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_11_1.jpg",
+                       "assets/products/client_prod_11_2.jpg"
+                   ],
+        "name":  "Gold \u0026 Bronze Shimmer Evening Gown",
+        "isNewArrival":  true
+    },
+    {
+        "originalPrice":  5611,
+        "id":  "v-cp-13",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  4599,
+        "fabric":  "Heavy Satin \u0026 Chiffon",
+        "category":  "All Collections",
+        "description":  "Vibrant red satin high-low gown featuring a trailing hemline and sculpted pleated bodice.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_13_1.jpg",
+                       "assets/products/client_prod_13_2.jpg",
+                       "assets/products/client_prod_13_3.jpg"
+                   ],
+        "name":  "Scarlet High-Low Satin Gown",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  4513,
+        "id":  "v-cp-14",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  3699,
+        "fabric":  "Liquid Satin \u0026 Embroidery",
+        "category":  "All Collections",
+        "description":  "Pre-stitched liquid satin draped saree in deep wine red paired with a cord-embroidered crop top.",
+        "isBestseller":  true,
+        "images":  [
+                       "assets/products/client_prod_14_1.jpg",
+                       "assets/products/client_prod_14_2.jpg",
+                       "assets/products/client_prod_14_3.jpg"
+                   ],
+        "name":  "Wine Red Cord-Embroidered Draped Saree",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  5245,
+        "id":  "v-cp-15",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  4299,
+        "fabric":  "Metallic Foil Georgette",
+        "category":  "All Collections",
+        "description":  "High-fashion metallic golden drape with micro-pleated wrap overlay and dramatic side tail.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_15_1.jpg"
+                   ],
+        "name":  "Golden Foil Sculpted Draped Outfit",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  4025,
+        "id":  "v-cp-16",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  3299,
+        "fabric":  "Sequin Mesh \u0026 Lurex",
+        "category":  "All Collections",
+        "description":  "Shimmering gold sequin mini dress featuring a pleated infinity loop drape across the bustier.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_16_1.jpg",
+                       "assets/products/client_prod_16_2.jpg"
+                   ],
+        "name":  "Gold Sequin Sculpted Infinity Bustier",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  3659,
+        "id":  "v-cp-17",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  2999,
+        "fabric":  "Silk Organza \u0026 Tulle",
+        "category":  "All Collections",
+        "description":  "Contemporary cream corset dress crafted with cascading wave drapes.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_17_1.jpg"
+                   ],
+        "name":  "Cream Corset Wave Drape Dress",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  5367,
+        "id":  "v-cp-18",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  4399,
+        "fabric":  "Satin \u0026 Pleated Chiffon",
+        "category":  "All Collections",
+        "description":  "Rich red sculpted drape gown featuring a dramatic floor-length waterfall trail.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_18_1.jpg",
+                       "assets/products/client_prod_18_2.jpg"
+                   ],
+        "name":  "Crimson Waterfall Trail Drape Gown",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  4269,
+        "id":  "v-cp-19",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  3499,
+        "fabric":  "Georgette \u0026 Organza",
+        "category":  "All Collections",
+        "description":  "Flared ivory kalidar Anarkali embellished with gold badla embroidery and organza dupatta.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_19_1.jpg"
+                   ],
+        "name":  "Ivory Embroidered Kalidar Anarkali",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  3537,
+        "id":  "v-cp-20",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  2899,
+        "fabric":  "Gradated Chiffon",
+        "category":  "All Collections",
+        "description":  "Azure blue and ivory gradated micro-pleated drape top for statement styling.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_20_1.jpg",
+                       "assets/products/client_prod_20_2.jpg"
+                   ],
+        "name":  "Ombre Azure Pleated Drape Top",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  4635,
+        "id":  "v-cp-21",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  3799,
+        "fabric":  "Metallic Tissue Georgette",
+        "category":  "All Collections",
+        "description":  "Charcoal grey metallic gown with criss-cross pleated bodice drapes and column skirt.",
+        "isBestseller":  true,
+        "images":  [
+                       "assets/products/client_prod_21_1.jpg"
+                   ],
+        "name":  "Charcoal Metallic Evening Gown",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  3903,
+        "id":  "v-cp-22",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  3199,
+        "fabric":  "Organza Satin",
+        "category":  "All Collections",
+        "description":  "3D hand-sculpted floral organza cocktail dress in warm pastel tones.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_22_1.jpg",
+                       "assets/products/client_prod_22_2.jpg"
+                   ],
+        "name":  "Sculpted Floral Organza Cocktail Dress",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  4025,
+        "id":  "v-cp-23",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  3299,
+        "fabric":  "Beaded Net \u0026 Georgette",
+        "category":  "All Collections",
+        "description":  "Intricately hand-beaded royal blue dress with a fan-draped bodice.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_23_1.jpg"
+                   ],
+        "name":  "Royal Blue Beaded Sculpted Dress",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  5123,
+        "id":  "v-cp-24",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  4199,
+        "fabric":  "Metallic Lurex \u0026 Satin",
+        "category":  "All Collections",
+        "description":  "Bronze lurex sculpted drape bodice paired with a black satin mermaid skirt.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_24_1.jpg"
+                   ],
+        "name":  "Metallic Bronze Couture Drape Gown",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  4147,
+        "id":  "v-cp-25",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  3399,
+        "fabric":  "Metallic Lurex Tissue",
+        "category":  "All Collections",
+        "description":  "Gunmetal metallic mini dress featuring a dramatic sculpted chest swirl.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_25_1.jpg"
+                   ],
+        "name":  "Gunmetal Metallic Sculpted Mini",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  4147,
+        "id":  "v-cp-26",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  3399,
+        "fabric":  "Sequined Lace",
+        "category":  "All Collections",
+        "description":  "Sapphire blue sequin lace midi dress with an off-shoulder sculpted bodice drape.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_26_1.jpg",
+                       "assets/products/client_prod_26_2.jpg"
+                   ],
+        "name":  "Sapphire Beaded Evening Midi",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  4757,
+        "id":  "v-cp-27",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  3899,
+        "fabric":  "Sequin \u0026 Satin",
+        "category":  "All Collections",
+        "description":  "Olive green sequin bustier draped with a sweeping satin trail over a noir column skirt.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_27_1.jpg",
+                       "assets/products/client_prod_27_2.jpg"
+                   ],
+        "name":  "Olive \u0026 Black Sequin Draped Couture",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  3659,
+        "id":  "v-cp-28",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  2999,
+        "fabric":  "Micro-Pleated Chiffon",
+        "category":  "All Collections",
+        "description":  "Black micro-pleated mini dress featuring wave sculpted drapes.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_28_1.jpg",
+                       "assets/products/client_prod_28_2.jpg"
+                   ],
+        "name":  "Noir Sculpted Wave Mini Dress",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  4269,
+        "id":  "v-cp-29",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  3499,
+        "fabric":  "Pleated Georgette",
+        "category":  "All Collections",
+        "description":  "Emerald green micro-pleated corset top with wing drapes.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_29_1.jpg",
+                       "assets/products/client_prod_29_2.jpg"
+                   ],
+        "name":  "Emerald Pleated Sculpted Corset",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  5611,
+        "id":  "v-cp-30",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  4599,
+        "fabric":  "Satin \u0026 Organza",
+        "category":  "All Collections",
+        "description":  "Scarlet satin ballgown featuring a high-low hem and pleated fan drapes.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_30_1.jpg",
+                       "assets/products/client_prod_30_2.jpg"
+                   ],
+        "name":  "Sculpted Red Satin High-Low Gown",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  4513,
+        "id":  "v-cp-31",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  3699,
+        "fabric":  "Lurex \u0026 Velvet",
+        "category":  "All Collections",
+        "description":  "Silver lurex sculpted corset paired with noir bell-bottom trousers.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_31_1.jpg"
+                   ],
+        "name":  "Metallic Silver Corset Flare Set",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  3903,
+        "id":  "v-cp-32",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  3199,
+        "fabric":  "Sequin Mesh",
+        "category":  "All Collections",
+        "description":  "Gilded sequin mini dress with champagne infinity pleat drapes.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_32_1.jpg"
+                   ],
+        "name":  "Champagne Gold Pleated Infinity Dress",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  5855,
+        "id":  "v-cp-33",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  4799,
+        "fabric":  "Lurex Tissue",
+        "category":  "All Collections",
+        "description":  "Full portrait gold shimmering gown with hand-beaded borders and flared train.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_33_1.jpg",
+                       "assets/products/client_prod_33_2.jpg"
+                   ],
+        "name":  "Gold \u0026 Bronze Shimmer Trail Gown",
+        "isNewArrival":  true
+    },
+    {
+        "originalPrice":  5123,
+        "id":  "v-cp-34",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  4199,
+        "fabric":  "Pleated Satin",
+        "category":  "All Collections",
+        "description":  "Creamy ivory satin gown with asymmetric slit skirt and waist drape knot.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_34_1.jpg",
+                       "assets/products/client_prod_34_2.jpg"
+                   ],
+        "name":  "Pure Ivory Sculpted Asymmetric Gown",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  4513,
+        "id":  "v-cp-35",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  3699,
+        "fabric":  "Liquid Satin",
+        "category":  "All Collections",
+        "description":  "Pre-stitched liquid satin draped saree with embroidered crop top.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_35_1.jpg",
+                       "assets/products/client_prod_35_2.jpg"
+                   ],
+        "name":  "Deep Wine Cord Draped Saree Set",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  2927,
+        "id":  "v-cp-36",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  2399,
+        "fabric":  "Modal Satin",
+        "category":  "All Collections",
+        "description":  "Botanical floral printed satin co-ord set with relaxed pants.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_36_1.jpg",
+                       "assets/products/client_prod_36_2.jpg"
+                   ],
+        "name":  "Floral Printed Silk Co-ord Set",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  4757,
+        "id":  "v-cp-37",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  3899,
+        "fabric":  "Georgette \u0026 Net",
+        "category":  "All Collections",
+        "description":  "Flared emerald floral pleated Anarkali with sheer dupattas.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_37_1.jpg",
+                       "assets/products/client_prod_37_2.jpg",
+                       "assets/products/client_prod_37_3.jpg"
+                   ],
+        "name":  "Emerald Floral Pleated Anarkali Set",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  4879,
+        "id":  "v-cp-38",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  3999,
+        "fabric":  "Metallic Lurex",
+        "category":  "All Collections",
+        "description":  "Bronze sculpted lurex bodice with noir mermaid skirt.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_38_1.jpg",
+                       "assets/products/client_prod_38_2.jpg"
+                   ],
+        "name":  "Bronze Metallic Evening Draped Gown",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  3781,
+        "id":  "v-cp-39",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  3099,
+        "fabric":  "Beaded Georgette",
+        "category":  "All Collections",
+        "description":  "Royal blue cocktail dress with hand-beaded fan bodice drapes.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_39_1.jpg",
+                       "assets/products/client_prod_39_2.jpg"
+                   ],
+        "name":  "Royal Blue Sculpted Fan Dress",
+        "isNewArrival":  false
+    },
+    {
+        "originalPrice":  4147,
+        "id":  "v-cp-40",
+        "sizes":  [
+                      "XS",
+                      "S",
+                      "M",
+                      "L",
+                      "XL",
+                      "XXL"
+                  ],
+        "price":  3399,
+        "fabric":  "Metallic Tissue",
+        "category":  "All Collections",
+        "description":  "Gunmetal metallic micro-pleated cocktail dress.",
+        "isBestseller":  false,
+        "images":  [
+                       "assets/products/client_prod_40_1.jpg",
+                       "assets/products/client_prod_40_2.jpg",
+                       "assets/products/client_prod_40_3.jpg",
+                       "assets/products/client_prod_40_4.jpg"
+                   ],
+        "name":  "Sculpted Gunmetal Cocktail Dress",
+        "isNewArrival":  false
+    }
 ];
 
 if (typeof module !== 'undefined' && module.exports) {
