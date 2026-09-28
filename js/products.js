@@ -1,4 +1,4 @@
-﻿// VASEVINE â€” Complete Product Catalog Data (All 80 Client Products)
+// VASEVINE â€” Complete Product Catalog Data (All 80 Client Products)
 
 const CATEGORIES = [
   {
@@ -249,29 +249,7 @@ const PRODUCTS = [
         "images":  [
                        "assets/products/client_prod_011.jpg"
                    ],
-        "name":  "Sapphire Cord-Embroidered Draped Saree",
-        "isNewArrival":  false
-    },
-    {
-        "originalPrice":  5749,
-        "id":  "v-cp-012",
-        "sizes":  [
-                      "XS",
-                      "S",
-                      "M",
-                      "L",
-                      "XL",
-                      "XXL"
-                  ],
-        "price":  4599,
-        "fabric":  "Sequin Mesh \u0026 Lurex",
-        "category":  "All Collections",
-        "description":  "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
-        "isBestseller":  false,
-        "images":  [
-                       "assets/products/client_prod_012.jpg"
-                   ],
-        "name":  "Golden Foil Infinity Bustier Dress",
+        "name":  "Sapphire Cord-Embroidered Draped Dress",
         "isNewArrival":  false
     },
     {
@@ -733,29 +711,7 @@ const PRODUCTS = [
         "images":  [
                        "assets/products/client_prod_033.jpg"
                    ],
-        "name":  "Blush Pink Peplum Lattice Gown",
-        "isNewArrival":  false
-    },
-    {
-        "originalPrice":  4624,
-        "id":  "v-cp-034",
-        "sizes":  [
-                      "XS",
-                      "S",
-                      "M",
-                      "L",
-                      "XL",
-                      "XXL"
-                  ],
-        "price":  3699,
-        "fabric":  "Silk Organza \u0026 Tulle",
-        "category":  "All Collections",
-        "description":  "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
-        "isBestseller":  false,
-        "images":  [
-                       "assets/products/client_prod_034.jpg"
-                   ],
-        "name":  "Emerald High-Low Satin Ballgown",
+        "name":  "Noir \u0026 Gold Sculpted Peplum Gown",
         "isNewArrival":  false
     },
     {
@@ -821,29 +777,7 @@ const PRODUCTS = [
         "images":  [
                        "assets/products/client_prod_037.jpg"
                    ],
-        "name":  "Noir Velvet Wave Drape Corset",
-        "isNewArrival":  false
-    },
-    {
-        "originalPrice":  5374,
-        "id":  "v-cp-038",
-        "sizes":  [
-                      "XS",
-                      "S",
-                      "M",
-                      "L",
-                      "XL",
-                      "XXL"
-                  ],
-        "price":  4299,
-        "fabric":  "Metallic Tissue Georgette",
-        "category":  "All Collections",
-        "description":  "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
-        "isBestseller":  false,
-        "images":  [
-                       "assets/products/client_prod_038.jpg"
-                   ],
-        "name":  "Coral Pleated Waterfall Trail Drape Gown",
+        "name":  "Crimson Sculpted Power Pantsuit",
         "isNewArrival":  false
     },
     {
@@ -1482,28 +1416,6 @@ const PRODUCTS = [
                        "assets/products/client_prod_067.jpg"
                    ],
         "name":  "Wine Red Hand-Beaded Fan Dress",
-        "isNewArrival":  false
-    },
-    {
-        "originalPrice":  5749,
-        "id":  "v-cp-068",
-        "sizes":  [
-                      "XS",
-                      "S",
-                      "M",
-                      "L",
-                      "XL",
-                      "XXL"
-                  ],
-        "price":  4599,
-        "fabric":  "Dual-Tone Georgette",
-        "category":  "All Collections",
-        "description":  "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
-        "isBestseller":  false,
-        "images":  [
-                       "assets/products/client_prod_068.jpg"
-                   ],
-        "name":  "Azure Ombre Mermaid Evening Gown",
         "isNewArrival":  false
     },
     {
