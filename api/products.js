@@ -1,4 +1,4 @@
-﻿const { getDatabase } = require('../../lib/mongodb');
+const { getDatabase } = require('../lib/mongodb');
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -14,7 +14,34 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const { category, bestseller, newArrival } = req.query;
+    const url = new URL(req.url, 'http://localhost');
+    const id = req.query?.id || url.searchParams.get('id');
+
+    // Handle single product detail if ID provided
+    if (id) {
+      let product = null;
+      try {
+        const { db } = await getDatabase();
+        product = await db.collection('products').findOne({
+          $or: [{ id: id }, { _id: id }]
+        });
+      } catch (dbErr) {
+        console.warn('MongoDB fallback for product detail:', dbErr.message);
+        const { PRODUCTS } = require('../js/products');
+        product = (PRODUCTS || []).find(p => p.id === id);
+      }
+
+      if (!product) {
+        return res.status(404).json({ success: false, error: 'Product not found' });
+      }
+
+      return res.status(200).json({ success: true, product });
+    }
+
+    // Otherwise handle product listing / filtering
+    const category = req.query?.category || url.searchParams.get('category');
+    const bestseller = req.query?.bestseller || url.searchParams.get('bestseller');
+    const newArrival = req.query?.newArrival || url.searchParams.get('newArrival');
 
     let products = [];
     try {
@@ -36,7 +63,7 @@ module.exports = async (req, res) => {
       // If database is empty, seed from default catalog if available
       if (products.length === 0 && !category && !bestseller && !newArrival) {
         try {
-          const { PRODUCTS } = require('../../js/products');
+          const { PRODUCTS } = require('../js/products');
           if (PRODUCTS && PRODUCTS.length > 0) {
             const seedData = PRODUCTS.map(p => ({
               ...p,
@@ -55,7 +82,7 @@ module.exports = async (req, res) => {
     } catch (dbErr) {
       console.warn('MongoDB connection fallback:', dbErr.message);
       // Fallback to static catalog if DB connection not ready yet
-      const { PRODUCTS } = require('../../js/products');
+      const { PRODUCTS } = require('../js/products');
       products = PRODUCTS || [];
     }
 
