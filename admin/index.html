@@ -16,6 +16,7 @@
     <div class="brand-wrapper">
       <a href="/admin" class="admin-logo">VASEVINE</a>
       <span class="admin-badge">Admin</span>
+      <span id="dbStatusBadge" class="status-pill" style="font-size:0.75rem; cursor:pointer; margin-left:10px; border:1px solid #E5E5E0;" onclick="toggleDbModal()">Checking DB...</span>
     </div>
 
     <div class="admin-nav-links">
@@ -26,6 +27,14 @@
   </header>
 
   <main class="admin-container">
+    <div id="dbWarningBanner" style="display:none; background:#FFFBEB; border:1px solid #FDE68A; padding:0.85rem 1.25rem; margin-bottom:1.5rem; border-radius:4px; font-size:0.85rem; color:#92400E;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <strong>MongoDB Notice:</strong> <span id="dbWarningText">Authentication Failed. Serving local catalog (80 garments).</span>
+        </div>
+        <button class="btn-outline" style="padding:0.25rem 0.6rem; font-size:0.75rem; border-color:#D97706; color:#92400E;" onclick="toggleDbModal()">Setup Guide</button>
+      </div>
+    </div>
     <!-- Tab Controls -->
     <nav class="tabs-bar">
       <button class="tab-btn active" onclick="switchTab('dashboard')">Dashboard</button>
@@ -312,6 +321,38 @@
           <button type="submit" class="btn-primary" id="saveProductBtn">SAVE PRODUCT</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- DB SETUP MODAL -->
+  <div id="dbSetupModal" class="modal-overlay">
+    <div class="modal-card" style="max-width:580px;">
+      <div class="modal-header">
+        <h3 class="modal-title">MongoDB Atlas Connection Setup</h3>
+        <button class="modal-close" onclick="toggleDbModal()">&times;</button>
+      </div>
+      <div style="font-size:0.88rem; line-height:1.6; color:#333;">
+        <p style="margin-bottom:1rem;">Your VASEVINE website is running with a built-in catalog of 80 garments. To enable persistent live orders and store database records, ensure your MongoDB Atlas credentials match:</p>
+        
+        <div style="background:#F9F9F6; border:1px solid #E5E5E0; padding:1rem; border-radius:4px; margin-bottom:1.25rem;">
+          <h4 style="font-size:0.85rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem;">Steps in MongoDB Atlas (cloud.mongodb.com):</h4>
+          <ol style="margin-left:1.25rem; font-size:0.82rem; display:flex; flex-direction:column; gap:0.4rem;">
+            <li>Go to <strong>Security &gt; Database Access</strong>.</li>
+            <li>Click <strong>Add New Database User</strong>.</li>
+            <li>Set <strong>Authentication Method</strong> to Password.</li>
+            <li>Username: <code style="background:#fff; padding:2px 5px; border:1px solid #ddd;">QSXgk3OVWCjuv4Hx</code> (or your chosen username).</li>
+            <li>Password: <code style="background:#fff; padding:2px 5px; border:1px solid #ddd;">QSXgk3OVWCjuv4Hx</code> (or your chosen password).</li>
+            <li>Under <strong>Database User Privileges</strong>, select <strong>Read and write to any database</strong>.</li>
+            <li>Click <strong>Add User</strong> to save.</li>
+            <li>Go to <strong>Security &gt; Network Access</strong> and make sure <strong>0.0.0.0/0</strong> (Allow Anywhere) is added.</li>
+          </ol>
+        </div>
+
+        <p style="font-size:0.82rem; color:var(--text-muted);">If you chose a different username/password, update <code style="background:#eee; padding:1px 4px;">MONGODB_URI</code> in <strong>Vercel &gt; Settings &gt; Environment Variables</strong> and redeploy.</p>
+      </div>
+      <div style="margin-top:1.5rem; text-align:right;">
+        <button class="btn-primary" onclick="toggleDbModal()">Got It</button>
+      </div>
     </div>
   </div>
 

@@ -1,4 +1,4 @@
-﻿// Global state
+// Global state
 let currentOrders = [];
 let currentProducts = [];
 let uploadedImages = [];
@@ -21,12 +21,54 @@ async function verifyAdminSession() {
     if (userGreeting && data.user) {
       userGreeting.textContent = `${data.user.username}`;
     }
-    // Load initial dashboard
+    // Load initial dashboard & check DB
+    checkDatabaseStatus();
     fetchAdminStats();
     fetchRecentOrders();
   } catch (err) {
     console.error('Session check failed:', err);
     window.location.href = '/admin/login';
+  }
+}
+
+function toggleDbModal() {
+  const modal = document.getElementById('dbSetupModal');
+  if (modal) {
+    modal.classList.toggle('active');
+  }
+}
+
+async function checkDatabaseStatus() {
+  const badge = document.getElementById('dbStatusBadge');
+  const banner = document.getElementById('dbWarningBanner');
+  const warningText = document.getElementById('dbWarningText');
+  try {
+    const res = await fetch('/api/db-status');
+    const data = await res.json();
+    if (data.connected) {
+      if (badge) {
+        badge.textContent = '● DB: Connected';
+        badge.style.background = '#ECFDF5';
+        badge.style.color = '#065F46';
+        badge.style.borderColor = '#A7F3D0';
+      }
+      if (banner) banner.style.display = 'none';
+    } else {
+      if (badge) {
+        badge.textContent = '● DB: Offline (80 Items Loaded)';
+        badge.style.background = '#FFFBEB';
+        badge.style.color = '#B45309';
+        badge.style.borderColor = '#FDE68A';
+      }
+      if (banner) {
+        banner.style.display = 'block';
+        if (warningText) {
+          warningText.textContent = `${data.message || 'Authentication failed'}. Serving local catalog of 80 garments.`;
+        }
+      }
+    }
+  } catch (e) {
+    if (badge) badge.textContent = '● DB: Offline';
   }
 }
 

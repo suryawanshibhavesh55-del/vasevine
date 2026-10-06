@@ -20,6 +20,18 @@ module.exports = async (req, res) => {
   const url = new URL(req.url, 'http://localhost');
   const queryId = req.query?.id || url.searchParams.get('id');
 
+  let db = null;
+  let dbConnected = false;
+  let dbError = null;
+  try {
+    const dbRes = await getDatabase();
+    db = dbRes.db;
+    dbConnected = true;
+  } catch (err) {
+    dbError = err.message;
+    console.warn('MongoDB admin orders connection warning:', err.message);
+  }
+
   // UPDATE ORDER STATUS (PATCH, PUT, or POST with action/id)
   if (req.method === 'PATCH' || req.method === 'PUT' || (req.method === 'POST' && queryId)) {
     const { status, note } = req.body || {};
@@ -36,10 +48,15 @@ module.exports = async (req, res) => {
       });
     }
 
-    try {
-      const { db } = await getDatabase();
-      const now = new Date();
+    if (!dbConnected || !db) {
+      return res.status(503).json({
+        success: false,
+        error: `Database offline: ${dbError || 'Authentication failed'}. Order status could not be updated in MongoDB.`
+      });
+    }
 
+    try {
+      const now = new Date();
       const historyEntry = {
         status,
         timestamp: now.toISOString(),
@@ -67,7 +84,8 @@ module.exports = async (req, res) => {
       return res.status(200).json({
         success: true,
         message: `Order status successfully updated to ${status}`,
-        order: result
+        order: result,
+        dbConnected: true
       });
     } catch (err) {
       console.error('Error updating order status:', err);
@@ -78,9 +96,18 @@ module.exports = async (req, res) => {
   // LIST ORDERS (GET)
   if (req.method === 'GET') {
     try {
+      if (!dbConnected || !db) {
+        return res.status(200).json({
+          success: true,
+          count: 0,
+          orders: [],
+          dbConnected: false,
+          dbError: dbError || 'MongoDB disconnected'
+        });
+      }
+
       const status = req.query?.status || url.searchParams.get('status');
       const search = req.query?.search || url.searchParams.get('search');
-      const { db } = await getDatabase();
 
       const query = {};
       if (status && status !== 'all') {
@@ -102,11 +129,18 @@ module.exports = async (req, res) => {
       return res.status(200).json({
         success: true,
         count: orders.length,
-        orders
+        orders,
+        dbConnected: true
       });
     } catch (err) {
       console.error('Error fetching admin orders:', err);
-      return res.status(500).json({ success: false, error: 'Failed to fetch orders' });
+      return res.status(200).json({
+        success: true,
+        count: 0,
+        orders: [],
+        dbConnected: false,
+        error: err.message
+      });
     }
   }
 
