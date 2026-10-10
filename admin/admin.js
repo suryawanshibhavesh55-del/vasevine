@@ -107,13 +107,13 @@ function switchTab(tabName) {
 // 3. Stats & Overview
 async function fetchAdminStats() {
   try {
-    const res = await fetch('/api/admin/stats');
+    const res = await fetch('/api/admin/stats?_t=' + Date.now());
     if (!res.ok) return;
     const data = await res.json();
     if (!data.success) return;
 
     const s = data.stats;
-    document.getElementById('statTotalSales').textContent = `â‚¹${(s.totalSales || 0).toLocaleString('en-IN')}`;
+    document.getElementById('statTotalSales').textContent = `\u20B9${(s.totalSales || 0).toLocaleString('en-IN')}`;
     document.getElementById('statTotalOrders').textContent = s.totalOrders || 0;
     document.getElementById('statPendingOrders').textContent = s.pendingOrders || 0;
     document.getElementById('statShippedOrders').textContent = s.shippedOrders || 0;
@@ -126,12 +126,16 @@ async function fetchAdminStats() {
 }
 
 async function fetchRecentOrders() {
+  const tbody = document.getElementById('recentOrdersTableBody');
+  if (tbody) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:2rem; color:var(--text-muted);">Loading recent orders...</td></tr>';
+  }
   try {
-    const res = await fetch('/api/admin/orders');
+    const res = await fetch('/api/admin/orders?_t=' + Date.now());
     if (!res.ok) return;
     const data = await res.json();
-    const orders = (data.orders || []).slice(0, 5);
-    const tbody = document.getElementById('recentOrdersTableBody');
+    currentOrders = data.orders || [];
+    const orders = currentOrders.slice(0, 5);
     if (!tbody) return;
 
     if (orders.length === 0) {
@@ -144,7 +148,7 @@ async function fetchRecentOrders() {
         <td><strong>#${o.orderId}</strong></td>
         <td>${escapeHtml(o.customer?.name || '')}<br><span style="font-size:0.78rem; color:var(--text-muted);">${o.customer?.mobile || ''}</span></td>
         <td>${formatDate(o.createdAt)}</td>
-        <td><strong>â‚¹${(o.total || 0).toLocaleString('en-IN')}</strong></td>
+        <td><strong>\u20B9${(o.total || 0).toLocaleString('en-IN')}</strong></td>
         <td><span class="status-pill status-${slugify(o.orderStatus)}">${o.orderStatus}</span></td>
         <td><button class="btn-outline" onclick="openOrderModal('${o.orderId}')">View</button></td>
       </tr>
@@ -174,7 +178,7 @@ async function fetchAdminOrders() {
   const status = statusFilter ? statusFilter.value : 'all';
 
   try {
-    const res = await fetch(`/api/admin/orders?search=${search}&status=${status}`);
+    const res = await fetch(`/api/admin/orders?search=${search}&status=${status}&_t=${Date.now()}`);
     const data = await res.json();
     currentOrders = data.orders || [];
 
@@ -191,7 +195,7 @@ async function fetchAdminOrders() {
           <td><strong>${escapeHtml(o.customer?.name || '')}</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">+91 ${o.customer?.mobile || ''}</span></td>
           <td>${escapeHtml(o.shippingAddress?.city || '')}, ${escapeHtml(o.shippingAddress?.state || '')}<br><span style="font-size:0.78rem; color:var(--text-muted);">PIN: ${o.shippingAddress?.pincode || ''}</span></td>
           <td>${itemsCount} item${itemsCount > 1 ? 's' : ''}</td>
-          <td><strong>â‚¹${(o.total || 0).toLocaleString('en-IN')}</strong></td>
+          <td><strong>\u20B9${(o.total || 0).toLocaleString('en-IN')}</strong></td>
           <td><span style="font-size:0.78rem; text-transform:uppercase; font-weight:600; color:#555;">${o.paymentStatus || 'Pending'}</span></td>
           <td><span class="status-pill status-${slugify(o.orderStatus)}">${o.orderStatus}</span></td>
           <td>
@@ -248,7 +252,7 @@ function openOrderModal(orderId) {
       <div style="background:#fff; border:1px solid var(--border); padding:1rem;">
         <strong style="display:block; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); margin-bottom:0.5rem;">Shipping Address</strong>
         <div>${escapeHtml(order.shippingAddress?.address || '')}</div>
-        <div>${escapeHtml(order.shippingAddress?.city || '')}, ${escapeHtml(order.shippingAddress?.state || '')} â€” ${order.shippingAddress?.pincode || ''}</div>
+        <div>${escapeHtml(order.shippingAddress?.city || '')}, ${escapeHtml(order.shippingAddress?.state || '')} — ${order.shippingAddress?.pincode || ''}</div>
       </div>
     </div>
 
@@ -263,7 +267,7 @@ function openOrderModal(orderId) {
               <div style="font-weight:600; font-size:0.9rem;">${escapeHtml(item.productName)}</div>
               <div style="font-size:0.78rem; color:var(--text-muted);">Size: ${item.size} &bull; Qty: ${item.quantity}</div>
             </div>
-            <div style="font-weight:600; font-size:0.95rem;">â‚¹${(item.unitPrice * item.quantity).toLocaleString('en-IN')}</div>
+            <div style="font-weight:600; font-size:0.95rem;">\u20B9${(item.unitPrice * item.quantity).toLocaleString('en-IN')}</div>
           </div>
         `).join('')}
       </div>
@@ -272,13 +276,13 @@ function openOrderModal(orderId) {
     <!-- Totals -->
     <div style="background:var(--bg-subtle); padding:1rem 1.25rem; border:1px solid var(--border); margin-bottom:1.5rem; font-size:0.9rem;">
       <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem;">
-        <span>Subtotal:</span><span>â‚¹${(order.subtotal || 0).toLocaleString('en-IN')}</span>
+        <span>Subtotal:</span><span>\u20B9${(order.subtotal || 0).toLocaleString('en-IN')}</span>
       </div>
       <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem;">
-        <span>Delivery Charge:</span><span>â‚¹${(order.deliveryCharge || 0).toLocaleString('en-IN')}</span>
+        <span>Delivery Charge:</span><span>\u20B9${(order.deliveryCharge || 0).toLocaleString('en-IN')}</span>
       </div>
       <div style="display:flex; justify-content:space-between; font-weight:700; font-size:1.05rem; border-top:1px solid var(--border); padding-top:0.5rem; margin-top:0.5rem;">
-        <span>Total Paid:</span><span>â‚¹${(order.total || 0).toLocaleString('en-IN')}</span>
+        <span>Total Paid:</span><span>\u20B9${(order.total || 0).toLocaleString('en-IN')}</span>
       </div>
     </div>
 
@@ -343,7 +347,7 @@ async function fetchAdminProducts() {
   const status = statFilter ? statFilter.value : 'All';
 
   try {
-    const res = await fetch(`/api/admin/products?category=${encodeURIComponent(category)}&status=${encodeURIComponent(status)}`);
+    const res = await fetch(`/api/admin/products?category=${encodeURIComponent(category)}&status=${encodeURIComponent(status)}&_t=${Date.now()}`);
     const data = await res.json();
     currentProducts = data.products || [];
 
@@ -355,14 +359,14 @@ async function fetchAdminProducts() {
     tbody.innerHTML = currentProducts.map(p => `
       <tr>
         <td>
-          <img src="${(p.images && p.images[0]) || 'assets/products/client_prod_001.jpg'}" style="width:48px; height:64px; object-fit:cover; border:1px solid var(--border);" />
+          <img src="${formatImgUrl(p.images && p.images[0])}" style="width:48px; height:64px; object-fit:cover; border:1px solid var(--border);" />
         </td>
         <td>
           <strong>${escapeHtml(p.name)}</strong>
           <div style="font-size:0.75rem; color:var(--text-muted);">ID: ${p.id}</div>
         </td>
         <td>${p.category}</td>
-        <td><strong>â‚¹${(p.price || 0).toLocaleString('en-IN')}</strong></td>
+        <td><strong>\u20B9${(p.price || 0).toLocaleString('en-IN')}</strong></td>
         <td>${p.stock || 0}</td>
         <td><span class="status-pill status-${p.status || 'active'}">${p.status || 'active'}</span></td>
         <td>
@@ -385,7 +389,7 @@ async function fetchAdminInventory() {
   tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:2rem; color:var(--text-muted);">Loading inventory...</td></tr>';
 
   try {
-    const res = await fetch('/api/admin/products');
+    const res = await fetch('/api/admin/products?_t=' + Date.now());
     const data = await res.json();
     const products = data.products || [];
 
@@ -402,7 +406,7 @@ async function fetchAdminInventory() {
 
       return `
         <tr>
-          <td><img src="${(p.images && p.images[0]) || 'assets/products/client_prod_001.jpg'}" style="width:40px; height:52px; object-fit:cover;" /></td>
+          <td><img src="${formatImgUrl(p.images && p.images[0])}" style="width:40px; height:52px; object-fit:cover;" /></td>
           <td><strong>${escapeHtml(p.name)}</strong></td>
           <td>${p.category}</td>
           <td><strong>${stock}</strong> units</td>
@@ -487,7 +491,7 @@ function renderImagePreviews() {
 
   container.innerHTML = uploadedImages.map((img, idx) => `
     <div class="thumb-preview-box">
-      <img src="${img}" />
+      <img src="${formatImgUrl(img)}" />
       <button type="button" class="thumb-remove-btn" onclick="removeImage(${idx})">&times;</button>
     </div>
   `).join('');
@@ -611,7 +615,7 @@ function slugify(text) {
 }
 
 function formatDate(dateStr, withTime = false) {
-  if (!dateStr) return 'â€”';
+  if (!dateStr) return '—';
   const d = new Date(dateStr);
   if (isNaN(d.getTime())) return dateStr;
   const options = { day: 'numeric', month: 'short', year: 'numeric' };
@@ -629,6 +633,12 @@ function escapeHtml(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
+}
+
+function formatImgUrl(url) {
+  if (!url) return '/assets/products/client_prod_001.jpg';
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) return url;
+  return url.startsWith('/') ? url : '/' + url;
 }
 
 function showToast(msg) {

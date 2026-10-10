@@ -12,6 +12,10 @@ const VALID_STATUSES = [
 ];
 
 module.exports = async (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+
   const admin = verifyAdmin(req);
   if (!admin) {
     return res.status(401).json({ success: false, error: 'Unauthorized: Admin session required' });

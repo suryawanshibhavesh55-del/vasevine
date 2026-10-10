@@ -3,6 +3,10 @@ const { getDatabase } = require('../../lib/mongodb');
 const { PRODUCTS } = require('../../js/products');
 
 module.exports = async (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+
   const admin = verifyAdmin(req);
   if (!admin) {
     return res.status(401).json({ success: false, error: 'Unauthorized: Admin session required' });
@@ -38,18 +42,21 @@ module.exports = async (req, res) => {
 
           products = await db.collection('products').find(query).sort({ createdAt: -1 }).toArray();
 
-          // Auto-seed to MongoDB if collection is currently empty
-          if (products.length === 0 && (!category || category === 'All') && (!status || status === 'All')) {
-            if (PRODUCTS && PRODUCTS.length > 0) {
-              const seedData = PRODUCTS.map(p => ({
+          // Auto-seed / sync to MongoDB if collection is empty or missing catalog items
+          if ((!category || category === 'All') && (!status || status === 'All')) {
+            if (PRODUCTS && PRODUCTS.length > products.length) {
+              const existingIds = new Set(products.map(p => p.id));
+              const missing = PRODUCTS.filter(p => !existingIds.has(p.id)).map(p => ({
                 ...p,
                 status: p.status || 'active',
                 stock: p.stock || 20,
                 createdAt: new Date(),
                 updatedAt: new Date()
               }));
-              await db.collection('products').insertMany(seedData);
-              products = seedData;
+              if (missing.length > 0) {
+                await db.collection('products').insertMany(missing);
+                products = [...products, ...missing];
+              }
             }
           }
         } catch (queryErr) {

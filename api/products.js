@@ -60,23 +60,26 @@ module.exports = async (req, res) => {
 
       products = await db.collection('products').find(query).sort({ createdAt: -1 }).toArray();
 
-      // If database is empty, seed from default catalog if available
-      if (products.length === 0 && !category && !bestseller && !newArrival) {
+      // If database is empty or missing catalog items, seed / sync from default catalog
+      if (!category && !bestseller && !newArrival) {
         try {
           const { PRODUCTS } = require('../js/products');
-          if (PRODUCTS && PRODUCTS.length > 0) {
-            const seedData = PRODUCTS.map(p => ({
+          if (PRODUCTS && PRODUCTS.length > products.length) {
+            const existingIds = new Set(products.map(p => p.id));
+            const missing = PRODUCTS.filter(p => !existingIds.has(p.id)).map(p => ({
               ...p,
               status: p.status || 'active',
               stock: p.stock || 20,
               createdAt: new Date(),
               updatedAt: new Date()
             }));
-            await db.collection('products').insertMany(seedData);
-            products = seedData;
+            if (missing.length > 0) {
+              await db.collection('products').insertMany(missing);
+              products = [...products, ...missing];
+            }
           }
         } catch (seedErr) {
-          console.warn('Catalog auto-seed notice:', seedErr.message);
+          console.warn('Catalog auto-sync notice:', seedErr.message);
         }
       }
     } catch (dbErr) {
