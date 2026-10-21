@@ -14,6 +14,7 @@ module.exports = async (req, res) => {
 
   const url = new URL(req.url, 'http://localhost');
   const queryId = req.query?.id || url.searchParams.get('id');
+  const VALID_CATEGORIES = ['draped-saree', 'gown', 'lehenga', 'dress', 'cordset'];
 
   let db = null;
   let dbConnected = false;
@@ -37,10 +38,35 @@ module.exports = async (req, res) => {
       if (dbConnected && db) {
         try {
           const query = {};
-          if (category && category !== 'All') query.category = category;
+          if (category && category !== 'All') {
+            if (category === 'uncategorized') {
+              query.$or = [
+                { category: null },
+                { category: { $exists: false } },
+                { category: '' },
+                { category: { $nin: VALID_CATEGORIES } }
+              ];
+            } else {
+              query.category = category;
+            }
+          }
           if (status && status !== 'All') query.status = status;
 
+          // One-time cleanup for any legacy non-standard category values in DB
+          try {
+            await db.collection('products').updateMany(
+              { category: { $nin: [...VALID_CATEGORIES, null] } },
+              { $set: { category: null } }
+            );
+          } catch (migErr) {}
+
           products = await db.collection('products').find(query).sort({ createdAt: -1 }).toArray();
+
+          // Normalize category
+          products = products.map(p => ({
+            ...p,
+            category: VALID_CATEGORIES.includes(p.category) ? p.category : null
+          }));
 
           // Auto-seed / sync to MongoDB if collection is empty or missing catalog items
           if ((!category || category === 'All') && (!status || status === 'All')) {
@@ -73,7 +99,11 @@ module.exports = async (req, res) => {
         }));
 
         if (category && category !== 'All') {
-          products = products.filter(p => p.category === category);
+          if (category === 'uncategorized') {
+            products = products.filter(p => !p.category || !VALID_CATEGORIES.includes(p.category));
+          } else {
+            products = products.filter(p => p.category === category);
+          }
         }
         if (status && status !== 'All') {
           products = products.filter(p => (p.status || 'active') === status);
@@ -121,6 +151,11 @@ module.exports = async (req, res) => {
         return res.status(400).json({ success: false, error: 'Product name and price are required' });
       }
 
+      const validCategory = VALID_CATEGORIES.includes(category) ? category : null;
+      if (!validCategory) {
+        return res.status(400).json({ success: false, error: 'Category is required (Draped Saree, Gown, Lehenga, Dress, or Cordset)' });
+      }
+
       const randomId = 'v-cp-' + Math.floor(100 + Math.random() * 900);
       const now = new Date();
 
@@ -131,7 +166,7 @@ module.exports = async (req, res) => {
         originalPrice: Number(originalPrice) || Math.round(Number(price) * 1.25),
         description: description || 'A refined VASEVINE statement silhouette crafted with structured detailing.',
         fabric: fabric || 'Luxury Silk & Organza Blend',
-        category: category || 'Dresses',
+        category: validCategory,
         sizes: Array.isArray(sizes) && sizes.length > 0 ? sizes : ['XS', 'S', 'M', 'L', 'XL'],
         stock: Number(stock) || 15,
         images: Array.isArray(images) && images.length > 0 ? images : ['assets/products/client_prod_001.jpg'],
@@ -170,6 +205,9 @@ module.exports = async (req, res) => {
 
       if (updateData.price) updateData.price = Number(updateData.price);
       if (updateData.stock !== undefined) updateData.stock = Number(updateData.stock);
+      if (updateData.category !== undefined) {
+        updateData.category = VALID_CATEGORIES.includes(updateData.category) ? updateData.category : null;
+      }
 
       if (dbConnected && db) {
         const result = await db.collection('products').findOneAndUpdate(

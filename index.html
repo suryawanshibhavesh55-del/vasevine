@@ -18,7 +18,8 @@
         <ul class="nav-links">
           <li><a href="#" class="nav-link active">Home</a></li>
           <li><a href="#shop" class="nav-link">Shop</a></li>
-          <li><a href="#categories" class="nav-link">Collections</a></li>
+          <li><a href="#categories" class="nav-link">Categories</a></li>
+          <li><a href="#collections" class="nav-link">Collections</a></li>
           <li><a href="#new-arrivals" class="nav-link">New Arrivals</a></li>
           <li><a href="#about" class="nav-link">About Us</a></li>
           <li><a href="#footer" class="nav-link">Contact</a></li>
@@ -80,7 +81,7 @@
   </section>
 
   <!-- Shop By Collection Section (Exact Reference Recreation) -->
-  <section id="categories" class="collection-section">
+  <section id="collections" class="collection-section">
     <div class="container">
       <h2 class="collection-section-title">Shop By Collection</h2>
       
@@ -119,12 +120,61 @@
     </div>
   </section>
 
-  <!-- Best Sellers Section -->
-  <section class="section-padding">
+  <!-- Categories Section (Replaced Best Sellers) -->
+  <section id="categories" class="section-padding categories-section">
     <div class="container">
-      <h2 class="section-title">Best Sellers</h2>
-      <div id="bestSellersGrid" class="product-grid">
-        <!-- Dynamic Best Sellers Rendered Here -->
+      <h2 class="section-title">Categories</h2>
+      
+      <!-- 5 Category Cards -->
+      <div class="category-cards-grid">
+        <div class="category-card" data-category="draped-saree" onclick="handleCategoryCardClick('draped-saree')">
+          <span class="category-card-tag">COLLECTION</span>
+          <h3 class="category-card-title">DRAPED SAREE</h3>
+          <span class="category-card-count" id="count-draped-saree">0 Products</span>
+          <span class="category-card-action">Explore &rarr;</span>
+        </div>
+
+        <div class="category-card" data-category="gown" onclick="handleCategoryCardClick('gown')">
+          <span class="category-card-tag">COLLECTION</span>
+          <h3 class="category-card-title">GOWN</h3>
+          <span class="category-card-count" id="count-gown">0 Products</span>
+          <span class="category-card-action">Explore &rarr;</span>
+        </div>
+
+        <div class="category-card" data-category="lehenga" onclick="handleCategoryCardClick('lehenga')">
+          <span class="category-card-tag">COLLECTION</span>
+          <h3 class="category-card-title">LEHENGA</h3>
+          <span class="category-card-count" id="count-lehenga">0 Products</span>
+          <span class="category-card-action">Explore &rarr;</span>
+        </div>
+
+        <div class="category-card" data-category="dress" onclick="handleCategoryCardClick('dress')">
+          <span class="category-card-tag">COLLECTION</span>
+          <h3 class="category-card-title">DRESS</h3>
+          <span class="category-card-count" id="count-dress">0 Products</span>
+          <span class="category-card-action">Explore &rarr;</span>
+        </div>
+
+        <div class="category-card" data-category="cordset" onclick="handleCategoryCardClick('cordset')">
+          <span class="category-card-tag">COLLECTION</span>
+          <h3 class="category-card-title">CORDSET</h3>
+          <span class="category-card-count" id="count-cordset">0 Products</span>
+          <span class="category-card-action">Explore &rarr;</span>
+        </div>
+      </div>
+
+      <!-- Selected Category Display Area (Dynamic products or empty state) -->
+      <div id="categoryActiveContainer" class="category-active-container" style="display:none;">
+        <div class="category-active-header">
+          <div>
+            <span class="eyebrow" style="font-size:0.85rem; letter-spacing:0.12em; text-transform:uppercase;">CATEGORY</span>
+            <h3 id="categoryActiveTitle" class="category-active-heading">GOWN</h3>
+          </div>
+          <button type="button" class="category-reset-btn" onclick="clearCategorySelection()">&times; Close Category</button>
+        </div>
+        <div id="categoryProductsGrid" class="product-grid">
+          <!-- Populated with assigned products, or empty state -->
+        </div>
       </div>
     </div>
   </section>

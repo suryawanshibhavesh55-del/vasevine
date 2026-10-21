@@ -334,6 +334,22 @@ async function submitOrderStatusUpdate(orderId) {
   }
 }
 
+// Category Mapping & Formatter
+const CATEGORY_MAP = {
+  'draped-saree': 'Draped Saree',
+  'gown': 'Gown',
+  'lehenga': 'Lehenga',
+  'dress': 'Dress',
+  'cordset': 'Cordset'
+};
+
+function formatCategory(cat) {
+  if (cat && CATEGORY_MAP[cat]) {
+    return `<strong>${CATEGORY_MAP[cat]}</strong>`;
+  }
+  return '<span style="color:#888888; font-style:italic;">Uncategorized</span>';
+}
+
 // 6. Products Management
 async function fetchAdminProducts() {
   const catFilter = document.getElementById('productCategoryFilter');
@@ -365,7 +381,7 @@ async function fetchAdminProducts() {
           <strong>${escapeHtml(p.name)}</strong>
           <div style="font-size:0.75rem; color:var(--text-muted);">ID: ${p.id}</div>
         </td>
-        <td>${p.category}</td>
+        <td>${formatCategory(p.category)}</td>
         <td><strong>\u20B9${(p.price || 0).toLocaleString('en-IN')}</strong></td>
         <td>${p.stock || 0}</td>
         <td><span class="status-pill status-${p.status || 'active'}">${p.status || 'active'}</span></td>
@@ -408,7 +424,7 @@ async function fetchAdminInventory() {
         <tr>
           <td><img src="${formatImgUrl(p.images && p.images[0])}" style="width:40px; height:52px; object-fit:cover;" /></td>
           <td><strong>${escapeHtml(p.name)}</strong></td>
-          <td>${p.category}</td>
+          <td>${formatCategory(p.category)}</td>
           <td><strong>${stock}</strong> units</td>
           <td>${badge}</td>
           <td>
@@ -454,6 +470,7 @@ function openAddProductModal() {
   document.getElementById('productModalTitle').textContent = 'Add New Product';
   document.getElementById('editProductId').value = '';
   document.getElementById('productForm').reset();
+  document.getElementById('prodCategory').value = '';
   uploadedImages = [];
   renderImagePreviews();
   document.getElementById('productFormModal').classList.add('active');
@@ -466,7 +483,7 @@ function openEditProductModal(productId) {
   document.getElementById('productModalTitle').textContent = 'Edit Product';
   document.getElementById('editProductId').value = p.id;
   document.getElementById('prodName').value = p.name || '';
-  document.getElementById('prodCategory').value = p.category || 'Dresses';
+  document.getElementById('prodCategory').value = (p.category && CATEGORY_MAP[p.category]) ? p.category : '';
   document.getElementById('prodPrice').value = p.price || '';
   document.getElementById('prodOriginalPrice').value = p.originalPrice || '';
   document.getElementById('prodStock').value = p.stock || 15;
@@ -548,7 +565,7 @@ async function handleSaveProduct(e) {
 
   const payload = {
     name: document.getElementById('prodName').value.trim(),
-    category: document.getElementById('prodCategory').value,
+    category: document.getElementById('prodCategory').value || null,
     price: Number(document.getElementById('prodPrice').value),
     originalPrice: Number(document.getElementById('prodOriginalPrice').value) || undefined,
     stock: Number(document.getElementById('prodStock').value),

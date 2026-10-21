@@ -7,15 +7,23 @@ if (cart.some(item => !item.product || item.product.id.startsWith('v-cs-') || it
   localStorage.removeItem('vasevine_cart');
 }
 
+const SITE_CATEGORIES = [
+  { slug: 'draped-saree', name: 'DRAPED SAREE', label: 'Draped Saree' },
+  { slug: 'gown', name: 'GOWN', label: 'Gown' },
+  { slug: 'lehenga', name: 'LEHENGA', label: 'Lehenga' },
+  { slug: 'dress', name: 'DRESS', label: 'Dress' },
+  { slug: 'cordset', name: 'CORDSET', label: 'Cordset' }
+];
+
 let activeCategory = 'All Collections';
+let selectedHomepageCategory = null;
 let selectedProduct = null;
 let selectedSize = 'M';
 let selectedQty = 1;
 
 document.addEventListener('DOMContentLoaded', () => {
   initNavbar();
-  renderCategories();
-  renderBestSellers();
+  updateCategoryCardCounts();
   renderShopGrid();
   initSearch();
   initCartDrawer();
@@ -34,7 +42,10 @@ async function loadLiveProducts() {
         // Update in-memory catalog with live MongoDB products
         PRODUCTS.length = 0;
         data.products.forEach(p => PRODUCTS.push(p));
-        renderBestSellers();
+        updateCategoryCardCounts();
+        if (selectedHomepageCategory) {
+          handleCategoryCardClick(selectedHomepageCategory);
+        }
         renderShopGrid();
       }
     }
@@ -65,19 +76,64 @@ function initNavbar() {
   }
 }
 
-// Render Category Banner / Cards (All Collections Focus)
-function renderCategories() {
-  // Handled cleanly via exact static markup in index.html matching design reference
+// Update actual category counts on homepage cards
+function updateCategoryCardCounts() {
+  SITE_CATEGORIES.forEach(cat => {
+    const count = PRODUCTS.filter(p => p.category === cat.slug).length;
+    const el = document.getElementById(`count-${cat.slug}`);
+    if (el) {
+      el.textContent = `${count} Product${count === 1 ? '' : 's'}`;
+    }
+  });
 }
 
-// Render Best Sellers Section (4 Client Products)
-function renderBestSellers() {
-  const container = document.getElementById('bestSellersGrid');
-  if (!container) return;
+// Handle Category Card Click on Homepage
+function handleCategoryCardClick(slug) {
+  selectedHomepageCategory = slug;
+  const catObj = SITE_CATEGORIES.find(c => c.slug === slug);
+  const container = document.getElementById('categoryActiveContainer');
+  const title = document.getElementById('categoryActiveTitle');
+  const grid = document.getElementById('categoryProductsGrid');
 
-  const bestSellers = PRODUCTS.filter(p => p.isBestseller).slice(0, 4);
+  // Highlight active category card
+  document.querySelectorAll('.category-card').forEach(card => {
+    if (card.getAttribute('data-category') === slug) {
+      card.classList.add('active');
+    } else {
+      card.classList.remove('active');
+    }
+  });
 
-  container.innerHTML = bestSellers.map(product => `
+  if (!container || !title || !grid || !catObj) return;
+
+  container.style.display = 'block';
+  title.textContent = catObj.name;
+
+  const categoryProducts = PRODUCTS.filter(p => p.category === slug);
+
+  if (categoryProducts.length === 0) {
+    grid.innerHTML = `
+      <div class="category-empty-state">
+        <p class="category-empty-message">No products available in this category yet.</p>
+      </div>
+    `;
+  } else {
+    grid.innerHTML = categoryProducts.map(product => renderProductCardHtml(product)).join('');
+  }
+
+  container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function clearCategorySelection() {
+  selectedHomepageCategory = null;
+  const container = document.getElementById('categoryActiveContainer');
+  if (container) container.style.display = 'none';
+  document.querySelectorAll('.category-card').forEach(card => card.classList.remove('active'));
+}
+
+// Reusable Product Card HTML Generator
+function renderProductCardHtml(product) {
+  return `
     <div class="product-card" onclick="openProductModal('${product.id}')">
       <div class="product-image-box">
         <img src="${product.images[0]}" alt="${product.name}" class="product-image" loading="lazy" />
@@ -92,45 +148,52 @@ function renderBestSellers() {
         </button>
       </div>
     </div>
-  `).join('');
+  `;
 }
 
-// Render All Collections Grid
-function renderShopGrid() {
+// Render All Collections / Shop Grid with Category Filtering
+function renderShopGrid(catFilter = activeCategory) {
+  activeCategory = catFilter;
   const container = document.getElementById('shopGrid');
   const tabsContainer = document.getElementById('filterTabs');
   if (!container) return;
 
-  // Single tab for All Collections
+  // Render Category filter tabs in Shop section
   if (tabsContainer) {
-    tabsContainer.innerHTML = `
-      <button class="filter-tab active" onclick="filterByCategory('All Collections')">
-        All Collections (${PRODUCTS.length})
+    const tabs = [
+      { slug: 'All Collections', label: `All Collections (${PRODUCTS.length})` },
+      ...SITE_CATEGORIES.map(c => {
+        const cnt = PRODUCTS.filter(p => p.category === c.slug).length;
+        return { slug: c.slug, label: `${c.label} (${cnt})` };
+      })
+    ];
+
+    tabsContainer.innerHTML = tabs.map(tab => `
+      <button class="filter-tab ${activeCategory === tab.slug ? 'active' : ''}" onclick="filterByCategory('${tab.slug}')">
+        ${tab.label}
       </button>
-    `;
+    `).join('');
   }
 
-  container.innerHTML = PRODUCTS.map(product => `
-    <div class="product-card" onclick="openProductModal('${product.id}')">
-      <div class="product-image-box">
-        <img src="${product.images[0]}" alt="${product.name}" class="product-image" loading="lazy" />
-        ${product.isNewArrival ? '<span class="product-badge">New</span>' : ''}
+  let filtered = PRODUCTS;
+  if (activeCategory && activeCategory !== 'All Collections') {
+    filtered = PRODUCTS.filter(p => p.category === activeCategory);
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div class="category-empty-state">
+        <p class="category-empty-message">No products available in this category yet.</p>
       </div>
-      <div class="product-info">
-        <h4 class="product-title">${product.name}</h4>
-        <span class="product-price">₹${product.price.toLocaleString('en-IN')}</span>
-        <button class="add-to-cart-btn" onclick="event.stopPropagation(); quickAddToCart('${product.id}')">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-          + Add to Cart
-        </button>
-      </div>
-    </div>
-  `).join('');
+    `;
+  } else {
+    container.innerHTML = filtered.map(product => renderProductCardHtml(product)).join('');
+  }
 }
 
 function filterByCategory(category) {
-  activeCategory = 'All Collections';
-  renderShopGrid();
+  activeCategory = category;
+  renderShopGrid(activeCategory);
   const shopSection = document.getElementById('shop');
   if (shopSection) {
     shopSection.scrollIntoView({ behavior: 'smooth' });

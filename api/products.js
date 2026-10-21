@@ -42,14 +42,24 @@ module.exports = async (req, res) => {
     const category = req.query?.category || url.searchParams.get('category');
     const bestseller = req.query?.bestseller || url.searchParams.get('bestseller');
     const newArrival = req.query?.newArrival || url.searchParams.get('newArrival');
+    const VALID_CATEGORIES = ['draped-saree', 'gown', 'lehenga', 'dress', 'cordset'];
 
     let products = [];
     try {
       const { db } = await getDatabase();
       const query = { status: { $ne: 'archived' } };
 
-      if (category && category !== 'All Collections') {
-        query.category = category;
+      if (category && category !== 'All Collections' && category !== 'All') {
+        if (category === 'uncategorized') {
+          query.$or = [
+            { category: null },
+            { category: { $exists: false } },
+            { category: '' },
+            { category: { $nin: VALID_CATEGORIES } }
+          ];
+        } else {
+          query.category = category;
+        }
       }
       if (bestseller === 'true') {
         query.isBestseller = true;
@@ -58,7 +68,21 @@ module.exports = async (req, res) => {
         query.isNewArrival = true;
       }
 
+      // One-time cleanup: ensure uncategorized products have category: null
+      try {
+        await db.collection('products').updateMany(
+          { category: { $nin: [...VALID_CATEGORIES, null] } },
+          { $set: { category: null } }
+        );
+      } catch (migErr) {}
+
       products = await db.collection('products').find(query).sort({ createdAt: -1 }).toArray();
+
+      // Normalize category field
+      products = products.map(p => ({
+        ...p,
+        category: VALID_CATEGORIES.includes(p.category) ? p.category : null
+      }));
 
       // If database is empty or missing catalog items, seed / sync from default catalog
       if (!category && !bestseller && !newArrival) {
@@ -86,7 +110,17 @@ module.exports = async (req, res) => {
       console.warn('MongoDB connection fallback:', dbErr.message);
       // Fallback to static catalog if DB connection not ready yet
       const { PRODUCTS } = require('../js/products');
-      products = PRODUCTS || [];
+      products = (PRODUCTS || []).map(p => ({
+        ...p,
+        category: VALID_CATEGORIES.includes(p.category) ? p.category : null
+      }));
+      if (category && category !== 'All Collections' && category !== 'All') {
+        if (category === 'uncategorized') {
+          products = products.filter(p => !p.category);
+        } else {
+          products = products.filter(p => p.category === category);
+        }
+      }
     }
 
     return res.status(200).json({

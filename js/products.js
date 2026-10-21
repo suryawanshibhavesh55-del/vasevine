@@ -2,10 +2,34 @@
 
 const CATEGORIES = [
   {
-    "id": "all-collections",
-    "name": "All Collections",
-    "image": "",
-    "description": "Explore the complete luxury couture collection from VASEVINE."
+    "id": "draped-saree",
+    "slug": "draped-saree",
+    "name": "DRAPED SAREE",
+    "displayName": "Draped Saree"
+  },
+  {
+    "id": "gown",
+    "slug": "gown",
+    "name": "GOWN",
+    "displayName": "Gown"
+  },
+  {
+    "id": "lehenga",
+    "slug": "lehenga",
+    "name": "LEHENGA",
+    "displayName": "Lehenga"
+  },
+  {
+    "id": "dress",
+    "slug": "dress",
+    "name": "DRESS",
+    "displayName": "Dress"
+  },
+  {
+    "id": "cordset",
+    "slug": "cordset",
+    "name": "CORDSET",
+    "displayName": "Cordset"
   }
 ];
 
@@ -23,7 +47,7 @@ const PRODUCTS = [
     ],
     "price": 2499,
     "fabric": "Metallic Foil Georgette",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": true,
     "images": [
@@ -45,7 +69,7 @@ const PRODUCTS = [
     ],
     "price": 2799,
     "fabric": "Mulmul Silk & Organza",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": true,
     "images": [
@@ -67,7 +91,7 @@ const PRODUCTS = [
     ],
     "price": 2999,
     "fabric": "Pleated Organza & Pearls",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -89,7 +113,7 @@ const PRODUCTS = [
     ],
     "price": 3299,
     "fabric": "Italian Velvet & Lurex",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -111,7 +135,7 @@ const PRODUCTS = [
     ],
     "price": 3499,
     "fabric": "Dual-Tone Georgette",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -133,7 +157,7 @@ const PRODUCTS = [
     ],
     "price": 3699,
     "fabric": "Chiffon Satin Blend",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -155,7 +179,7 @@ const PRODUCTS = [
     ],
     "price": 3899,
     "fabric": "Poly-Silk Blend",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": true,
     "images": [
@@ -177,7 +201,7 @@ const PRODUCTS = [
     ],
     "price": 3999,
     "fabric": "Lurex Tissue & Crystals",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -199,7 +223,7 @@ const PRODUCTS = [
     ],
     "price": 4199,
     "fabric": "Raw Silk & Zari Thread",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -221,7 +245,7 @@ const PRODUCTS = [
     ],
     "price": 4299,
     "fabric": "Heavy Satin & Chiffon",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -243,7 +267,7 @@ const PRODUCTS = [
     ],
     "price": 4499,
     "fabric": "Liquid Satin & Embroidery",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -265,7 +289,7 @@ const PRODUCTS = [
     ],
     "price": 4799,
     "fabric": "Silk Organza & Tulle",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -287,7 +311,7 @@ const PRODUCTS = [
     ],
     "price": 4899,
     "fabric": "Satin & Micro-Pleated Chiffon",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": true,
     "images": [
@@ -309,7 +333,7 @@ const PRODUCTS = [
     ],
     "price": 2499,
     "fabric": "Georgette & Net",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -331,7 +355,7 @@ const PRODUCTS = [
     ],
     "price": 2799,
     "fabric": "Gradated Chiffon",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -353,7 +377,7 @@ const PRODUCTS = [
     ],
     "price": 2999,
     "fabric": "Metallic Tissue Georgette",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -375,7 +399,7 @@ const PRODUCTS = [
     ],
     "price": 3299,
     "fabric": "Organza Satin",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -397,7 +421,7 @@ const PRODUCTS = [
     ],
     "price": 3499,
     "fabric": "Beaded Net & Georgette",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -419,7 +443,7 @@ const PRODUCTS = [
     ],
     "price": 3699,
     "fabric": "Metallic Lurex & Satin",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -441,7 +465,7 @@ const PRODUCTS = [
     ],
     "price": 3899,
     "fabric": "Metallic Lurex Tissue",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": true,
     "images": [
@@ -463,7 +487,7 @@ const PRODUCTS = [
     ],
     "price": 3999,
     "fabric": "Metallic Foil Georgette",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -485,7 +509,7 @@ const PRODUCTS = [
     ],
     "price": 4199,
     "fabric": "Mulmul Silk & Organza",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -507,7 +531,7 @@ const PRODUCTS = [
     ],
     "price": 4299,
     "fabric": "Pleated Organza & Pearls",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -529,7 +553,7 @@ const PRODUCTS = [
     ],
     "price": 4499,
     "fabric": "Italian Velvet & Lurex",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -551,7 +575,7 @@ const PRODUCTS = [
     ],
     "price": 4599,
     "fabric": "Dual-Tone Georgette",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -573,7 +597,7 @@ const PRODUCTS = [
     ],
     "price": 4799,
     "fabric": "Chiffon Satin Blend",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -595,7 +619,7 @@ const PRODUCTS = [
     ],
     "price": 4899,
     "fabric": "Poly-Silk Blend",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": true,
     "images": [
@@ -617,7 +641,7 @@ const PRODUCTS = [
     ],
     "price": 2499,
     "fabric": "Lurex Tissue & Crystals",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -639,7 +663,7 @@ const PRODUCTS = [
     ],
     "price": 2799,
     "fabric": "Raw Silk & Zari Thread",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -661,7 +685,7 @@ const PRODUCTS = [
     ],
     "price": 2999,
     "fabric": "Heavy Satin & Chiffon",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -683,7 +707,7 @@ const PRODUCTS = [
     ],
     "price": 3299,
     "fabric": "Liquid Satin & Embroidery",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -705,7 +729,7 @@ const PRODUCTS = [
     ],
     "price": 3499,
     "fabric": "Sequin Mesh & Lurex",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -727,7 +751,7 @@ const PRODUCTS = [
     ],
     "price": 3899,
     "fabric": "Satin & Micro-Pleated Chiffon",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": true,
     "images": [
@@ -749,7 +773,7 @@ const PRODUCTS = [
     ],
     "price": 3999,
     "fabric": "Georgette & Net",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -771,7 +795,7 @@ const PRODUCTS = [
     ],
     "price": 4199,
     "fabric": "Gradated Chiffon",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -793,7 +817,7 @@ const PRODUCTS = [
     ],
     "price": 4499,
     "fabric": "Organza Satin",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -815,7 +839,7 @@ const PRODUCTS = [
     ],
     "price": 4599,
     "fabric": "Beaded Net & Georgette",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -837,7 +861,7 @@ const PRODUCTS = [
     ],
     "price": 4799,
     "fabric": "Metallic Lurex & Satin",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -859,7 +883,7 @@ const PRODUCTS = [
     ],
     "price": 4899,
     "fabric": "Metallic Lurex Tissue",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": true,
     "images": [
@@ -881,7 +905,7 @@ const PRODUCTS = [
     ],
     "price": 2499,
     "fabric": "Metallic Foil Georgette",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -903,7 +927,7 @@ const PRODUCTS = [
     ],
     "price": 2799,
     "fabric": "Mulmul Silk & Organza",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -925,7 +949,7 @@ const PRODUCTS = [
     ],
     "price": 2999,
     "fabric": "Pleated Organza & Pearls",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -947,7 +971,7 @@ const PRODUCTS = [
     ],
     "price": 3299,
     "fabric": "Italian Velvet & Lurex",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -969,7 +993,7 @@ const PRODUCTS = [
     ],
     "price": 3499,
     "fabric": "Dual-Tone Georgette",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -991,7 +1015,7 @@ const PRODUCTS = [
     ],
     "price": 3699,
     "fabric": "Chiffon Satin Blend",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1013,7 +1037,7 @@ const PRODUCTS = [
     ],
     "price": 3899,
     "fabric": "Poly-Silk Blend",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": true,
     "images": [
@@ -1035,7 +1059,7 @@ const PRODUCTS = [
     ],
     "price": 3999,
     "fabric": "Lurex Tissue & Crystals",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1057,7 +1081,7 @@ const PRODUCTS = [
     ],
     "price": 4199,
     "fabric": "Raw Silk & Zari Thread",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1079,7 +1103,7 @@ const PRODUCTS = [
     ],
     "price": 4299,
     "fabric": "Heavy Satin & Chiffon",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1101,7 +1125,7 @@ const PRODUCTS = [
     ],
     "price": 4499,
     "fabric": "Liquid Satin & Embroidery",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1123,7 +1147,7 @@ const PRODUCTS = [
     ],
     "price": 4599,
     "fabric": "Sequin Mesh & Lurex",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1145,7 +1169,7 @@ const PRODUCTS = [
     ],
     "price": 4799,
     "fabric": "Silk Organza & Tulle",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1167,7 +1191,7 @@ const PRODUCTS = [
     ],
     "price": 4899,
     "fabric": "Satin & Micro-Pleated Chiffon",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": true,
     "images": [
@@ -1189,7 +1213,7 @@ const PRODUCTS = [
     ],
     "price": 2499,
     "fabric": "Georgette & Net",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1211,7 +1235,7 @@ const PRODUCTS = [
     ],
     "price": 2799,
     "fabric": "Gradated Chiffon",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1233,7 +1257,7 @@ const PRODUCTS = [
     ],
     "price": 2999,
     "fabric": "Metallic Tissue Georgette",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1255,7 +1279,7 @@ const PRODUCTS = [
     ],
     "price": 3299,
     "fabric": "Organza Satin",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1277,7 +1301,7 @@ const PRODUCTS = [
     ],
     "price": 3499,
     "fabric": "Beaded Net & Georgette",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1299,7 +1323,7 @@ const PRODUCTS = [
     ],
     "price": 3699,
     "fabric": "Metallic Lurex & Satin",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1321,7 +1345,7 @@ const PRODUCTS = [
     ],
     "price": 3899,
     "fabric": "Metallic Lurex Tissue",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": true,
     "images": [
@@ -1343,7 +1367,7 @@ const PRODUCTS = [
     ],
     "price": 3999,
     "fabric": "Metallic Foil Georgette",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1365,7 +1389,7 @@ const PRODUCTS = [
     ],
     "price": 4199,
     "fabric": "Mulmul Silk & Organza",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1387,7 +1411,7 @@ const PRODUCTS = [
     ],
     "price": 4299,
     "fabric": "Pleated Organza & Pearls",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1409,7 +1433,7 @@ const PRODUCTS = [
     ],
     "price": 4499,
     "fabric": "Italian Velvet & Lurex",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1431,7 +1455,7 @@ const PRODUCTS = [
     ],
     "price": 4799,
     "fabric": "Chiffon Satin Blend",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1453,7 +1477,7 @@ const PRODUCTS = [
     ],
     "price": 4899,
     "fabric": "Poly-Silk Blend",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": true,
     "images": [
@@ -1475,7 +1499,7 @@ const PRODUCTS = [
     ],
     "price": 2499,
     "fabric": "Lurex Tissue & Crystals",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1497,7 +1521,7 @@ const PRODUCTS = [
     ],
     "price": 2799,
     "fabric": "Raw Silk & Zari Thread",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1519,7 +1543,7 @@ const PRODUCTS = [
     ],
     "price": 2999,
     "fabric": "Heavy Satin & Chiffon",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1541,7 +1565,7 @@ const PRODUCTS = [
     ],
     "price": 3299,
     "fabric": "Liquid Satin & Embroidery",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1563,7 +1587,7 @@ const PRODUCTS = [
     ],
     "price": 3499,
     "fabric": "Sequin Mesh & Lurex",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1585,7 +1609,7 @@ const PRODUCTS = [
     ],
     "price": 3699,
     "fabric": "Silk Organza & Tulle",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1607,7 +1631,7 @@ const PRODUCTS = [
     ],
     "price": 3899,
     "fabric": "Satin & Micro-Pleated Chiffon",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": true,
     "images": [
@@ -1629,7 +1653,7 @@ const PRODUCTS = [
     ],
     "price": 3999,
     "fabric": "Georgette & Net",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1651,7 +1675,7 @@ const PRODUCTS = [
     ],
     "price": 4199,
     "fabric": "Gradated Chiffon",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1673,7 +1697,7 @@ const PRODUCTS = [
     ],
     "price": 4299,
     "fabric": "Metallic Tissue Georgette",
-    "category": "All Collections",
+    "category": null,
     "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
     "isBestseller": false,
     "images": [
@@ -1687,7 +1711,7 @@ const PRODUCTS = [
     "name": "Aura Champagne Pleated Ballgown",
     "price": 4499,
     "originalPrice": 5599,
-    "category": "All Collections",
+    "category": null,
     "fabric": "Micro-Pleated Metallic Tissue & Silk",
     "description": "A radiant couture ballgown sculpted in shimmering micro-pleated metallic tissue with structured dimensional bodice draping.",
     "sizes": [
@@ -1709,7 +1733,7 @@ const PRODUCTS = [
     "name": "Peacock Blue Sculpted Cascade Dress",
     "price": 3799,
     "originalPrice": 4699,
-    "category": "All Collections",
+    "category": null,
     "fabric": "Lustrous Metallic Lurex & Micro-Pleats",
     "description": "A showstopping metallic cocktail dress featuring a fan-sculpted sweetheart neckline and a dramatic floor-sweeping side cascade.",
     "sizes": [
@@ -1731,7 +1755,7 @@ const PRODUCTS = [
     "name": "Blush Rose Pleated Cascade Gown",
     "price": 4299,
     "originalPrice": 5299,
-    "category": "All Collections",
+    "category": null,
     "fabric": "Pleated Georgette & Hand-Embroidered Sequin Ribbons",
     "description": "An ethereal blush pink evening gown featuring architectural pleating, hand-embroidered linear sequin detailing, and a sensual side slit.",
     "sizes": [
@@ -1753,7 +1777,7 @@ const PRODUCTS = [
     "name": "Burgundy Sculptural Tulle Cutout Gown",
     "price": 4599,
     "originalPrice": 5799,
-    "category": "All Collections",
+    "category": null,
     "fabric": "Sculpted Pleated Georgette & Illusion Tulle",
     "description": "A dramatic burgundy couture silhouette defined by continuous sculptural pleated swirls, one-shoulder drape, and subtle illusion tulle accents.",
     "sizes": [
@@ -1775,7 +1799,7 @@ const PRODUCTS = [
     "name": "Midnight Navy Pleated Corset Ensemble",
     "price": 3999,
     "originalPrice": 4999,
-    "category": "All Collections",
+    "category": null,
     "fabric": "Pleated Organza, Bugle Beads & Pure Satin",
     "description": "A sophisticated one-shoulder navy peplum corset with micro-crystal pinstripe fluting paired with a sweeping duchesse satin skirt.",
     "sizes": [
@@ -1797,7 +1821,7 @@ const PRODUCTS = [
     "name": "Sunset Ombre Sculpted Corset Gown",
     "price": 4399,
     "originalPrice": 5499,
-    "category": "All Collections",
+    "category": null,
     "fabric": "Ombre Fluted Pleated Silk & Crepe",
     "description": "A dynamic sunset gradient gown in vibrant fuchsia and flame orange, highlighted by a fluted sculptural corset bodice and high slit.",
     "sizes": [
@@ -1819,7 +1843,7 @@ const PRODUCTS = [
     "name": "Slate Metallic Fan-Drape Cocktail Dress",
     "price": 3899,
     "originalPrice": 4899,
-    "category": "All Collections",
+    "category": null,
     "fabric": "Pleated Metallic Shimmer Foil & Crepe",
     "description": "An avant-garde sculpted cocktail dress crafted in glistening charcoal foil with an architectural sunburst shoulder drape and cascade.",
     "sizes": [
@@ -1841,7 +1865,7 @@ const PRODUCTS = [
     "name": "Rani Fuchsia Embroidered Cape Saree Set",
     "price": 4699,
     "originalPrice": 5899,
-    "category": "All Collections",
+    "category": null,
     "fabric": "Zardozi Embroidered Silk & Flowing Georgette",
     "description": "A vibrant rani pink modern saree set featuring a crystal and pearl hand-embroidered bustier, sculpted waistband, and floor-length sheer capes.",
     "sizes": [
@@ -1863,7 +1887,7 @@ const PRODUCTS = [
     "name": "Champagne Leaf Applique Saree Gown",
     "price": 4599,
     "originalPrice": 5699,
-    "category": "All Collections",
+    "category": null,
     "fabric": "Handcrafted Zari Foliage Applique & Satin Crepe",
     "description": "A couture draped saree gown adorned with exquisite three-dimensional metallic leaf motifs across the shoulder and bodice.",
     "sizes": [
@@ -1885,7 +1909,7 @@ const PRODUCTS = [
     "name": "Signature Burgundy Swirl Couture Gown",
     "price": 4799,
     "originalPrice": 5999,
-    "category": "All Collections",
+    "category": null,
     "fabric": "Micro-Pleated Silk Georgette & Sculpted Bodice",
     "description": "Vasevine signature couture triumph showcasing fluid circular drape architecture, dramatic one-shoulder structure, and seamless contouring.",
     "sizes": [
@@ -1907,7 +1931,7 @@ const PRODUCTS = [
     "name": "Molten Gold Sculpted Corset Ballgown",
     "price": 4899,
     "originalPrice": 6199,
-    "category": "All Collections",
+    "category": null,
     "fabric": "Structured Metallic Cord Embroidery & Duchesse Satin",
     "description": "A regal black-tie statement pairing a sculpted molten-gold dimensional wave corset with an opulent midnight black gathered satin skirt.",
     "sizes": [
@@ -1929,7 +1953,7 @@ const PRODUCTS = [
     "name": "Serene Ice Blue Pearl Corset Gown",
     "price": 4699,
     "originalPrice": 5899,
-    "category": "All Collections",
+    "category": null,
     "fabric": "Fine Pleated Tulle, Hand-Sewn Pearls & Liquid Satin",
     "description": "A poetic masterpiece in serene ice blue featuring pleated wing shoulders, scattered luminous seed pearls, and a liquid satin draped skirt.",
     "sizes": [
@@ -1951,7 +1975,7 @@ const PRODUCTS = [
     "name": "Scarlet Ruby Crystal Sculpted Gown",
     "price": 4999,
     "originalPrice": 6299,
-    "category": "All Collections",
+    "category": null,
     "fabric": "Crystal-Embellished Pleated Organza & Royal Satin",
     "description": "An opulent scarlet red couture gown adorned with hand-placed ruby crystals, sculpted micro-pleated crossover bodice, and royal side train.",
     "sizes": [
