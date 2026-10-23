@@ -111,6 +111,7 @@ module.exports = async (req, res) => {
             {
               $set: {
                 paymentStatus: 'Paid',
+                inventoryDeducted: true,
                 paymentMethod: (payment && payment.method) || 'online',
                 paidAt: now,
                 razorpayPaymentId: razorpayPaymentId || existingOrder.razorpayPaymentId,

@@ -1,0 +1,19 @@
+# Ignore raw/unprocessed client photo uploads (saves ~300MB deployment payload)
+assets/*.PNG
+assets/*.png
+assets/*.HEIC
+assets/*.heic
+assets/*.JPEG
+assets/*.jpeg
+assets/*.jpg.jpeg
+assets/*.JPG.jpeg
+assets/client_products/
+assets/new/
+processed_assets/
+
+# Keep only .env.example
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local

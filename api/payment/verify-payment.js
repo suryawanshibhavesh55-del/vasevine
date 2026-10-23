@@ -14,17 +14,16 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const {
-      orderId,
-      razorpayOrderId,
-      razorpayPaymentId,
-      razorpaySignature
-    } = req.body || {};
+    const body = req.body || {};
+    const orderId = body.orderId || body.localOrderId;
+    const razorpayOrderId = body.razorpayOrderId || body.razorpay_order_id;
+    const razorpayPaymentId = body.razorpayPaymentId || body.razorpay_payment_id;
+    const razorpaySignature = body.razorpaySignature || body.razorpay_signature;
 
     if (!orderId || !razorpayOrderId || !razorpayPaymentId || !razorpaySignature) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required payment verification parameters'
+        error: 'Missing required payment verification parameters (orderId, razorpayOrderId, razorpayPaymentId, razorpaySignature)'
       });
     }
 
@@ -131,6 +130,7 @@ module.exports = async (req, res) => {
       {
         $set: {
           paymentStatus: 'Paid',
+          inventoryDeducted: true,
           paymentMethod: paymentDetails.method || 'online',
           paymentGateway: 'Razorpay',
           razorpayPaymentId: razorpayPaymentId,

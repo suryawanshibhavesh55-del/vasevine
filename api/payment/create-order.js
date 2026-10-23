@@ -203,6 +203,7 @@ module.exports = async (req, res) => {
       total: finalTotal,
       currency: 'INR',
       paymentStatus: 'Pending',
+      inventoryDeducted: false,
       paymentGateway: 'Razorpay',
       orderStatus: 'Order Placed',
       statusHistory: [

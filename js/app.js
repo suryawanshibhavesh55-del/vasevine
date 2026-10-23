@@ -839,7 +839,7 @@ async function handlePlaceOrder(e) {
 
         try {
           // 4. Verify payment signature on server
-          const verifyRes = await fetch('/api/payment/verify-payment', {
+          const verifyRes = await fetch('/api/payment/verify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
