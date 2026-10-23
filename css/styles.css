@@ -1097,9 +1097,7 @@ img {
 }
 
 .detail-original-price {
-  font-size: 1rem;
-  color: var(--text-light);
-  text-decoration: line-through;
+  display: none !important;
 }
 
 .detail-desc {

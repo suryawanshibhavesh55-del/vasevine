@@ -236,7 +236,6 @@ function openProductModal(productId) {
         <h2 class="detail-title">${selectedProduct.name}</h2>
         <div class="detail-price-row">
           <span class="detail-price">₹${selectedProduct.price.toLocaleString('en-IN')}</span>
-          ${selectedProduct.originalPrice ? `<span class="detail-original-price">₹${selectedProduct.originalPrice.toLocaleString('en-IN')}</span>` : ''}
         </div>
         <p class="detail-desc">${selectedProduct.description}</p>
         
