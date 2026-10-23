@@ -1354,7 +1354,7 @@ function initSearch() {
 
       resultsContainer.innerHTML = matches.map(p => `
         <div style="display:flex; align-items:center; gap:1rem; padding:0.75rem 0; border-bottom:1px solid var(--border-light); cursor:pointer;" onclick="openProductModal('${p.id}'); document.getElementById('searchModal').classList.remove('active');">
-          <img src="${p.images[0]}" style="width:50px; height:65px; object-fit:cover; object-position:top center;" />
+          <img src="${p.images[0]}" style="width:50px; height:65px; object-fit:contain; object-position:center; background-color:var(--bg-card);" />
           <div>
             <h5 style="font-size:0.9rem;">${p.name}</h5>
             <span style="font-size:0.8rem; color:var(--text-muted);">₹${p.price.toLocaleString('en-IN')}</span>
