@@ -357,6 +357,22 @@
     </div>
   </div>
 
+  <!-- MODAL 4: DELETE PRODUCT PERMANENTLY CONFIRMATION -->
+  <div id="deleteConfirmModal" class="modal-overlay">
+    <div class="modal-box" style="max-width:440px; text-align:center; padding:2rem;">
+      <div style="width:48px; height:48px; border-radius:50%; background:#FEE2E2; color:#DC2626; display:flex; align-items:center; justify-content:center; margin:0 auto 1rem; font-size:1.5rem; font-weight:700;">&excl;</div>
+      <h3 style="font-family:var(--font-serif); font-size:1.5rem; margin-bottom:0.75rem; color:#111;">Delete this product permanently?</h3>
+      <p style="font-size:0.92rem; color:#666; line-height:1.5; margin-bottom:1.5rem;">
+        This action cannot be undone.
+      </p>
+      <div id="deleteProductInfoPreview" style="font-size:0.85rem; font-weight:600; color:#111; margin-bottom:1.5rem; background:var(--bg-subtle); padding:0.6rem; border:1px solid var(--border);"></div>
+      <div style="display:flex; justify-content:center; gap:12px;">
+        <button type="button" class="btn-outline" style="min-width:110px;" onclick="closeDeleteModal()">CANCEL</button>
+        <button type="button" class="btn-primary" id="confirmDeleteBtn" style="background:#DC2626; border-color:#DC2626; min-width:170px;" onclick="executeDeleteProduct()">DELETE PERMANENTLY</button>
+      </div>
+    </div>
+  </div>
+
   <div id="adminToast" class="admin-toast">Action completed</div>
 
   <script src="/admin/admin.js"></script>

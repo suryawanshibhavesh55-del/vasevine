@@ -1,4 +1,17 @@
 const { getDatabase } = require('../lib/mongodb');
+const { ObjectId } = require('mongodb');
+
+function buildIdQuery(rawId) {
+  if (!rawId) return { _id: null };
+  const queries = [{ id: rawId }];
+  if (typeof rawId === 'string' && ObjectId.isValid(rawId) && rawId.length === 24) {
+    try {
+      queries.push({ _id: new ObjectId(rawId) });
+    } catch (e) {}
+  }
+  queries.push({ _id: rawId });
+  return { $or: queries };
+}
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -22,23 +35,22 @@ module.exports = async (req, res) => {
       let product = null;
       try {
         const { db } = await getDatabase();
-        product = await db.collection('products').findOne({
-          $or: [{ id: id }, { _id: id }]
-        });
+        product = await db.collection('products').findOne(buildIdQuery(id));
       } catch (dbErr) {
         console.warn('MongoDB fallback for product detail:', dbErr.message);
         const { PRODUCTS } = require('../js/products');
         product = (PRODUCTS || []).find(p => p.id === id);
       }
 
-      if (!product) {
-        return res.status(404).json({ success: false, error: 'Product not found' });
+      // Hide or reject archived products from public view
+      if (!product || product.status === 'archived') {
+        return res.status(404).json({ success: false, error: 'Product not found or unavailable' });
       }
 
       return res.status(200).json({ success: true, product });
     }
 
-    // Otherwise handle product listing / filtering
+    // Otherwise handle public product listing / filtering (ONLY active products)
     const category = req.query?.category || url.searchParams.get('category');
     const bestseller = req.query?.bestseller || url.searchParams.get('bestseller');
     const newArrival = req.query?.newArrival || url.searchParams.get('newArrival');
@@ -47,7 +59,7 @@ module.exports = async (req, res) => {
     let products = [];
     try {
       const { db } = await getDatabase();
-      const query = { status: { $ne: 'archived' } };
+      const query = { status: 'active' };
 
       if (category && category !== 'All Collections' && category !== 'All') {
         if (category === 'uncategorized') {
@@ -68,14 +80,6 @@ module.exports = async (req, res) => {
         query.isNewArrival = true;
       }
 
-      // One-time cleanup: ensure uncategorized products have category: null
-      try {
-        await db.collection('products').updateMany(
-          { category: { $nin: [...VALID_CATEGORIES, null] } },
-          { $set: { category: null } }
-        );
-      } catch (migErr) {}
-
       products = await db.collection('products').find(query).sort({ createdAt: -1 }).toArray();
 
       // Normalize category field
@@ -83,34 +87,11 @@ module.exports = async (req, res) => {
         ...p,
         category: VALID_CATEGORIES.includes(p.category) ? p.category : null
       }));
-
-      // If database is empty or missing catalog items, seed / sync from default catalog
-      if (!category && !bestseller && !newArrival) {
-        try {
-          const { PRODUCTS } = require('../js/products');
-          if (PRODUCTS && PRODUCTS.length > products.length) {
-            const existingIds = new Set(products.map(p => p.id));
-            const missing = PRODUCTS.filter(p => !existingIds.has(p.id)).map(p => ({
-              ...p,
-              status: p.status || 'active',
-              stock: p.stock || 20,
-              createdAt: new Date(),
-              updatedAt: new Date()
-            }));
-            if (missing.length > 0) {
-              await db.collection('products').insertMany(missing);
-              products = [...products, ...missing];
-            }
-          }
-        } catch (seedErr) {
-          console.warn('Catalog auto-sync notice:', seedErr.message);
-        }
-      }
     } catch (dbErr) {
       console.warn('MongoDB connection fallback:', dbErr.message);
       // Fallback to static catalog if DB connection not ready yet
       const { PRODUCTS } = require('../js/products');
-      products = (PRODUCTS || []).map(p => ({
+      products = (PRODUCTS || []).filter(p => !p.status || p.status === 'active').map(p => ({
         ...p,
         category: VALID_CATEGORIES.includes(p.category) ? p.category : null
       }));

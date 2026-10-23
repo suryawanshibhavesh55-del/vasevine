@@ -372,27 +372,36 @@ async function fetchAdminProducts() {
       return;
     }
 
-    tbody.innerHTML = currentProducts.map(p => `
-      <tr>
-        <td>
-          <img src="${formatImgUrl(p.images && p.images[0])}" style="width:48px; height:64px; object-fit:cover; border:1px solid var(--border);" />
-        </td>
-        <td>
-          <strong>${escapeHtml(p.name)}</strong>
-          <div style="font-size:0.75rem; color:var(--text-muted);">ID: ${p.id}</div>
-        </td>
-        <td>${formatCategory(p.category)}</td>
-        <td><strong>\u20B9${(p.price || 0).toLocaleString('en-IN')}</strong></td>
-        <td>${p.stock || 0}</td>
-        <td><span class="status-pill status-${p.status || 'active'}">${p.status || 'active'}</span></td>
-        <td>
-          <button class="btn-outline" style="padding:0.35rem 0.75rem; font-size:0.75rem; margin-right:6px;" onclick="openEditProductModal('${p.id}')">Edit</button>
-          ${p.status !== 'archived' ? `
-            <button class="btn-outline" style="padding:0.35rem 0.75rem; font-size:0.75rem; color:#B91C1C;" onclick="archiveProduct('${p.id}')">Archive</button>
-          ` : ''}
-        </td>
-      </tr>
-    `).join('');
+    tbody.innerHTML = currentProducts.map(p => {
+      const uid = p._id ? String(p._id) : p.id;
+      const isArchived = (p.status === 'archived');
+      return `
+        <tr>
+          <td>
+            <img src="${formatImgUrl(p.images && p.images[0])}" style="width:48px; height:64px; object-fit:cover; border:1px solid var(--border);" />
+          </td>
+          <td>
+            <strong>${escapeHtml(p.name)}</strong>
+            <div style="font-size:0.75rem; color:var(--text-muted);">ID: ${escapeHtml(p.id || '')}</div>
+          </td>
+          <td>${formatCategory(p.category)}</td>
+          <td><strong>\u20B9${(p.price || 0).toLocaleString('en-IN')}</strong></td>
+          <td>${p.stock || 0}</td>
+          <td><span class="status-pill status-${p.status || 'active'}">${p.status || 'active'}</span></td>
+          <td>
+            <div style="display:flex; gap:6px; flex-wrap:nowrap; align-items:center;">
+              <button class="btn-outline" style="padding:0.35rem 0.65rem; font-size:0.75rem;" onclick="openEditProductModal('${uid}')">Edit</button>
+              ${isArchived ? `
+                <button class="btn-outline" style="padding:0.35rem 0.65rem; font-size:0.75rem; color:#047857; border-color:#10B981;" onclick="restoreProduct('${uid}')">Restore</button>
+              ` : `
+                <button class="btn-outline" style="padding:0.35rem 0.65rem; font-size:0.75rem; color:#B45309; border-color:#F59E0B;" onclick="archiveProduct('${uid}')">Archive</button>
+              `}
+              <button class="btn-outline" style="padding:0.35rem 0.65rem; font-size:0.75rem; color:#B91C1C; border-color:#EF4444;" onclick="openDeleteModal('${uid}')">Delete</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
   } catch (err) {
     tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:2rem; color:#B3261E;">Failed to load products.</td></tr>';
   }
@@ -477,11 +486,11 @@ function openAddProductModal() {
 }
 
 function openEditProductModal(productId) {
-  const p = currentProducts.find(item => item.id === productId);
+  const p = currentProducts.find(item => (item._id && String(item._id) === String(productId)) || item.id === productId);
   if (!p) return;
 
   document.getElementById('productModalTitle').textContent = 'Edit Product';
-  document.getElementById('editProductId').value = p.id;
+  document.getElementById('editProductId').value = p._id ? String(p._id) : p.id;
   document.getElementById('prodName').value = p.name || '';
   document.getElementById('prodCategory').value = (p.category && CATEGORY_MAP[p.category]) ? p.category : '';
   document.getElementById('prodPrice').value = p.price || '';
@@ -608,21 +617,98 @@ async function handleSaveProduct(e) {
   }
 }
 
-async function archiveProduct(productId) {
-  if (!confirm(`Are you sure you want to archive product ${productId}? It will be hidden from the storefront.`)) return;
+// Product Actions: Archive, Restore, Delete
+async function archiveProduct(targetId) {
+  const p = currentProducts.find(item => (item._id && String(item._id) === String(targetId)) || item.id === targetId);
+  const pName = p ? p.name : 'this product';
+  if (!confirm(`Archive "${pName}"?\nIt will be hidden from the storefront.`)) return;
 
   try {
-    const res = await fetch(`/api/admin/products/${productId}`, { method: 'DELETE' });
+    const res = await fetch(`/api/admin/products/${targetId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'archived' })
+    });
     const data = await res.json();
     if (res.ok && data.success) {
       showToast('Product archived');
       fetchAdminProducts();
       fetchAdminStats();
     } else {
-      alert(data.error || 'Failed to archive');
+      alert(data.error || 'Failed to archive product');
     }
   } catch (err) {
-    alert('Network error');
+    alert('Network error while archiving');
+  }
+}
+
+async function restoreProduct(targetId) {
+  try {
+    const res = await fetch(`/api/admin/products/${targetId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'active' })
+    });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      showToast('Product restored to storefront');
+      fetchAdminProducts();
+      fetchAdminStats();
+    } else {
+      alert(data.error || 'Failed to restore product');
+    }
+  } catch (err) {
+    alert('Network error while restoring');
+  }
+}
+
+let pendingDeleteId = null;
+
+function openDeleteModal(targetId) {
+  pendingDeleteId = targetId;
+  const p = currentProducts.find(item => (item._id && String(item._id) === String(targetId)) || item.id === targetId);
+  const infoEl = document.getElementById('deleteProductInfoPreview');
+  if (infoEl) {
+    infoEl.textContent = p ? `${p.name} (ID: ${p.id || 'N/A'})` : `ID: ${targetId}`;
+  }
+  const modal = document.getElementById('deleteConfirmModal');
+  if (modal) modal.classList.add('active');
+}
+
+function closeDeleteModal() {
+  pendingDeleteId = null;
+  const modal = document.getElementById('deleteConfirmModal');
+  if (modal) modal.classList.remove('active');
+}
+
+async function executeDeleteProduct() {
+  if (!pendingDeleteId) return;
+  const btn = document.getElementById('confirmDeleteBtn');
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'DELETING...';
+  }
+
+  try {
+    const res = await fetch(`/api/admin/products/${pendingDeleteId}`, {
+      method: 'DELETE'
+    });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      showToast('Product deleted permanently');
+      closeDeleteModal();
+      fetchAdminProducts();
+      fetchAdminStats();
+    } else {
+      alert(data.error || 'Failed to delete product');
+    }
+  } catch (err) {
+    alert('Network error while deleting product');
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = 'DELETE PERMANENTLY';
+    }
   }
 }
 

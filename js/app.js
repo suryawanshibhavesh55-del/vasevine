@@ -38,10 +38,11 @@ async function loadLiveProducts() {
     const res = await fetch('/api/products');
     if (res.ok) {
       const data = await res.json();
-      if (data && data.success && Array.isArray(data.products) && data.products.length > 0) {
-        // Update in-memory catalog with live MongoDB products
+      if (data && data.success && Array.isArray(data.products)) {
+        // Only load active products onto the public storefront
+        const activeProducts = data.products.filter(p => !p.status || p.status === 'active');
         PRODUCTS.length = 0;
-        data.products.forEach(p => PRODUCTS.push(p));
+        activeProducts.forEach(p => PRODUCTS.push(p));
         updateCategoryCardCounts();
         if (selectedHomepageCategory) {
           handleCategoryCardClick(selectedHomepageCategory);
@@ -202,7 +203,7 @@ function filterByCategory(category) {
 
 // Product Detail Modal
 function openProductModal(productId) {
-  selectedProduct = PRODUCTS.find(p => p.id === productId);
+  selectedProduct = PRODUCTS.find(p => (p.id === productId || (p._id && String(p._id) === String(productId))) && (!p.status || p.status === 'active'));
   if (!selectedProduct) return;
 
   selectedSize = 'M';
@@ -300,7 +301,7 @@ function closeProductModal() {
 
 // Cart Drawer Functionality
 function quickAddToCart(productId) {
-  const product = PRODUCTS.find(p => p.id === productId);
+  const product = PRODUCTS.find(p => (p.id === productId || (p._id && String(p._id) === String(productId))) && (!p.status || p.status === 'active'));
   if (!product) return;
 
   addToCart(product, 'M', 1);
@@ -1346,8 +1347,9 @@ function initSearch() {
       }
 
       const matches = PRODUCTS.filter(p => 
-        p.name.toLowerCase().includes(query) || 
-        p.description.toLowerCase().includes(query)
+        (!p.status || p.status === 'active') &&
+        (p.name.toLowerCase().includes(query) || 
+        p.description.toLowerCase().includes(query))
       );
 
       resultsContainer.innerHTML = matches.map(p => `

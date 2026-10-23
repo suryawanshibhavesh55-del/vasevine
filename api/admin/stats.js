@@ -32,13 +32,10 @@ module.exports = async (req, res) => {
         const shippedOrders = await db.collection('orders').countDocuments({ orderStatus: 'Shipped' });
         const deliveredOrders = await db.collection('orders').countDocuments({ orderStatus: 'Delivered' });
 
-        let totalProducts = await db.collection('products').countDocuments({ status: { $ne: 'archived' } });
-        if (totalProducts === 0 && PRODUCTS && PRODUCTS.length > 0) {
-          totalProducts = PRODUCTS.length;
-        }
+        const totalProducts = await db.collection('products').countDocuments({ status: 'active' });
 
         const lowStockProducts = await db.collection('products').countDocuments({
-          status: { $ne: 'archived' },
+          status: 'active',
           stock: { $lte: 5, $gt: 0 }
         });
 

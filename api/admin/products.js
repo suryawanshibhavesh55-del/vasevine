@@ -1,6 +1,19 @@
 const { verifyAdmin } = require('../../lib/auth');
 const { getDatabase } = require('../../lib/mongodb');
 const { PRODUCTS } = require('../../js/products');
+const { ObjectId } = require('mongodb');
+
+function buildIdQuery(rawId) {
+  if (!rawId) return { _id: null };
+  const queries = [{ id: rawId }];
+  if (typeof rawId === 'string' && ObjectId.isValid(rawId) && rawId.length === 24) {
+    try {
+      queries.push({ _id: new ObjectId(rawId) });
+    } catch (e) {}
+  }
+  queries.push({ _id: rawId });
+  return { $or: queries };
+}
 
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
@@ -67,31 +80,13 @@ module.exports = async (req, res) => {
             ...p,
             category: VALID_CATEGORIES.includes(p.category) ? p.category : null
           }));
-
-          // Auto-seed / sync to MongoDB if collection is empty or missing catalog items
-          if ((!category || category === 'All') && (!status || status === 'All')) {
-            if (PRODUCTS && PRODUCTS.length > products.length) {
-              const existingIds = new Set(products.map(p => p.id));
-              const missing = PRODUCTS.filter(p => !existingIds.has(p.id)).map(p => ({
-                ...p,
-                status: p.status || 'active',
-                stock: p.stock || 20,
-                createdAt: new Date(),
-                updatedAt: new Date()
-              }));
-              if (missing.length > 0) {
-                await db.collection('products').insertMany(missing);
-                products = [...products, ...missing];
-              }
-            }
-          }
         } catch (queryErr) {
           console.warn('MongoDB query warning in admin products:', queryErr.message);
         }
       }
 
-      // If DB returned empty or was offline, fallback to the 80 client catalog products
-      if (!products || products.length === 0) {
+      // Fallback ONLY if MongoDB is disconnected / unreachable
+      if (!dbConnected) {
         products = (PRODUCTS || []).map(p => ({
           ...p,
           status: p.status || 'active',
@@ -193,7 +188,7 @@ module.exports = async (req, res) => {
     }
   }
 
-  // PUT: update product
+  // PUT: update product (edit fields, archive, restore)
   if (req.method === 'PUT') {
     const id = queryId || req.body?.id;
     if (!id) return res.status(400).json({ success: false, error: 'Product ID required' });
@@ -203,19 +198,30 @@ module.exports = async (req, res) => {
       delete updateData._id;
       delete updateData.id;
 
-      if (updateData.price) updateData.price = Number(updateData.price);
+      if (updateData.price !== undefined) updateData.price = Number(updateData.price);
+      if (updateData.originalPrice !== undefined) updateData.originalPrice = Number(updateData.originalPrice);
       if (updateData.stock !== undefined) updateData.stock = Number(updateData.stock);
       if (updateData.category !== undefined) {
         updateData.category = VALID_CATEGORIES.includes(updateData.category) ? updateData.category : null;
       }
+      if (updateData.status !== undefined) {
+        const validStatuses = ['active', 'archived', 'draft'];
+        if (!validStatuses.includes(updateData.status)) {
+          delete updateData.status;
+        }
+      }
 
       if (dbConnected && db) {
+        const query = buildIdQuery(id);
         const result = await db.collection('products').findOneAndUpdate(
-          { $or: [{ id: id }, { _id: id }] },
+          query,
           { $set: updateData },
           { returnDocument: 'after' }
         );
-        if (result) return res.status(200).json({ success: true, product: result, dbConnected: true });
+        const updatedDoc = result && (result.value || result);
+        if (updatedDoc) {
+          return res.status(200).json({ success: true, product: updatedDoc, dbConnected: true });
+        }
       }
 
       return res.status(200).json({
@@ -230,24 +236,28 @@ module.exports = async (req, res) => {
     }
   }
 
-  // DELETE: soft-delete product (status = 'archived')
+  // DELETE: permanent delete product document
   if (req.method === 'DELETE') {
     const id = queryId || req.body?.id;
     if (!id) return res.status(400).json({ success: false, error: 'Product ID required' });
 
     try {
       if (dbConnected && db) {
-        await db.collection('products').findOneAndUpdate(
-          { $or: [{ id: id }, { _id: id }] },
-          { $set: { status: 'archived', updatedAt: new Date() } },
-          { returnDocument: 'after' }
-        );
+        const query = buildIdQuery(id);
+        const result = await db.collection('products').deleteOne(query);
+        if (result.deletedCount === 0) {
+          return res.status(404).json({ success: false, error: 'Product not found', dbConnected });
+        }
       }
 
-      return res.status(200).json({ success: true, message: 'Product archived successfully', dbConnected });
+      return res.status(200).json({
+        success: true,
+        message: 'Product permanently deleted',
+        dbConnected
+      });
     } catch (err) {
-      console.error('Error archiving product:', err);
-      return res.status(500).json({ success: false, error: 'Failed to archive product' });
+      console.error('Error permanently deleting product:', err);
+      return res.status(500).json({ success: false, error: 'Failed to delete product' });
     }
   }
 
