@@ -9,13 +9,32 @@ module.exports = async (req, res) => {
 
   const url = new URL(req.url, 'http://localhost');
 
-  // Customer order lookup (GET /api/orders?customer=...)
+  // Customer order lookup (GET /api/orders?customer=... or /api/orders?id=...)
   if (req.method === 'GET') {
     const rawMobile = req.query?.customer || req.query?.mobile || url.searchParams.get('customer') || url.searchParams.get('mobile');
+    const queryOrderId = req.query?.id || url.searchParams.get('id');
+
+    if (queryOrderId) {
+      try {
+        const { db } = await getDatabase();
+        const order = await db.collection('orders').findOne({
+          $or: [
+            { orderId: queryOrderId.trim() },
+            { orderId: queryOrderId.trim().toUpperCase() },
+            { razorpayOrderId: queryOrderId.trim() }
+          ]
+        });
+        if (!order) return res.status(404).json({ success: false, error: 'Order not found' });
+        return res.status(200).json({ success: true, order });
+      } catch (err) {
+        return res.status(500).json({ success: false, error: 'Failed to look up order' });
+      }
+    }
+
     const cleanMobile = String(rawMobile || '').replace(/\D/g, '').slice(-10);
 
     if (!cleanMobile || cleanMobile.length !== 10) {
-      return res.status(400).json({ success: false, error: 'Valid 10-digit mobile number required' });
+      return res.status(400).json({ success: false, error: 'Valid 10-digit mobile number or Order ID required' });
     }
 
     try {

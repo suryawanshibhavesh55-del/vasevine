@@ -591,7 +591,7 @@ function openCheckoutModal() {
             </div>
           </div>
 
-          <button type="submit" id="placeOrderBtn" class="btn-primary" style="margin-top:0.5rem; width:100%;">PLACE ORDER</button>
+          <button type="submit" id="placeOrderBtn" class="btn-primary" style="margin-top:0.5rem; width:100%;">PAY WITH RAZORPAY</button>
         </div>
       </form>
     </div>
@@ -694,7 +694,7 @@ async function handlePincodeInput(inputEl) {
   }, 250);
 }
 
-function handlePlaceOrder(e) {
+async function handlePlaceOrder(e) {
   e.preventDefault();
 
   const pincodeInput = document.getElementById('checkoutPincode');
@@ -706,128 +706,273 @@ function handlePlaceOrder(e) {
     return;
   }
 
-  const name = document.getElementById('checkoutName') ? document.getElementById('checkoutName').value.trim() : 'Customer';
-  const phone = document.getElementById('checkoutPhone') ? document.getElementById('checkoutPhone').value.trim() : '9876543210';
-  const email = document.getElementById('checkoutEmail') ? document.getElementById('checkoutEmail').value.trim() : '';
-  const address = document.getElementById('checkoutAddress') ? document.getElementById('checkoutAddress').value.trim() : '';
+  const nameInput = document.getElementById('checkoutName');
+  const phoneInput = document.getElementById('checkoutPhone');
+  const emailInput = document.getElementById('checkoutEmail');
+  const addressInput = document.getElementById('checkoutAddress');
+  const cityInput = document.getElementById('checkoutCity');
+  const stateInput = document.getElementById('checkoutState');
+  const placeOrderBtn = document.getElementById('placeOrderBtn');
 
-  const subtotal = cart.reduce((sum, i) => sum + i.product.price * i.qty, 0);
-  const deliveryCharge = currentDeliveryInfo.deliveryCharge;
-  const finalTotal = subtotal + deliveryCharge;
-  const orderNumber = 'VS' + Math.floor(10000 + Math.random() * 90000);
-  const deliveryLocation = `${currentDeliveryInfo.city}, ${currentDeliveryInfo.state} (${currentDeliveryInfo.pincode})`;
+  const name = nameInput ? nameInput.value.trim() : '';
+  const rawPhone = phoneInput ? phoneInput.value.trim() : '';
+  const email = emailInput ? emailInput.value.trim() : '';
+  const address = addressInput ? addressInput.value.trim() : '';
+  const city = (cityInput && cityInput.value.trim()) || currentDeliveryInfo.city;
+  const state = (stateInput && stateInput.value.trim()) || currentDeliveryInfo.state;
 
-  // Record this order into customer orders store
-  const newOrder = {
-    id: orderNumber,
-    mobile: phone,
-    date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
-    status: 'Order Placed',
-    estimatedDelivery: '3–5 business days',
-    items: cart.map(i => ({
-      productId: i.product.id,
-      productName: i.product.name,
-      image: i.product.images[0],
-      size: i.size,
-      quantity: i.qty,
-      price: i.product.price
-    })),
-    subtotal: subtotal,
-    delivery: deliveryCharge,
-    total: finalTotal,
-    customer: {
-      name: name,
-      phone: phone,
-      email: email,
-      address: address,
-      city: currentDeliveryInfo.city,
-      state: currentDeliveryInfo.state,
-      pincode: currentDeliveryInfo.pincode
-    },
-    timeline: [
-      { status: "Order Placed", date: "Just now", completed: true, current: true },
-      { status: "Order Confirmed", date: "Pending", completed: false },
-      { status: "Processing", date: "Pending", completed: false },
-      { status: "Shipped", date: "Pending", completed: false },
-      { status: "Out for Delivery", date: "Pending", completed: false },
-      { status: "Delivered", date: "Pending", completed: false }
-    ]
-  };
+  if (!name) {
+    alert('Please enter your full name.');
+    if (nameInput) nameInput.focus();
+    return;
+  }
 
-  const storedOrders = JSON.parse(localStorage.getItem('vasevine_orders')) || [];
-  storedOrders.unshift(newOrder);
-  localStorage.setItem('vasevine_orders', JSON.stringify(storedOrders));
+  const cleanPhone = rawPhone.replace(/\D/g, '').slice(-10);
+  if (!cleanPhone || cleanPhone.length !== 10) {
+    alert('Please enter a valid 10-digit mobile number.');
+    if (phoneInput) phoneInput.focus();
+    return;
+  }
 
-  // Persist order to MongoDB through Vercel Serverless Function
+  if (!address) {
+    alert('Please enter your shipping address.');
+    if (addressInput) addressInput.focus();
+    return;
+  }
+
+  if (cart.length === 0) {
+    alert('Your shopping bag is empty.');
+    return;
+  }
+
+  // Set loading state on checkout button
+  if (placeOrderBtn) {
+    placeOrderBtn.disabled = true;
+    placeOrderBtn.innerHTML = `
+      <span style="display:inline-flex; align-items:center; justify-content:center; gap:8px;">
+        <span style="width:14px; height:14px; border:2px solid #fff; border-top-color:transparent; border-radius:50%; display:inline-block; animation:vvSpin 0.8s linear infinite;"></span>
+        INITIATING SECURE PAYMENT...
+      </span>
+    `;
+  }
+
   try {
-    fetch('/api/orders', {
+    // 1. Create order on server via Razorpay API & MongoDB
+    const createRes = await fetch('/api/payment/create-order', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        customer: { name, mobile: phone, email },
+        customer: {
+          name: name,
+          mobile: cleanPhone,
+          email: email
+        },
         shippingAddress: {
-          address,
-          city: currentDeliveryInfo.city,
-          state: currentDeliveryInfo.state,
+          address: address,
+          city: city,
+          state: state,
           pincode: currentDeliveryInfo.pincode
         },
         items: cart.map(i => ({
           productId: i.product.id,
           productName: i.product.name,
-          productImage: i.product.images[0],
+          productImage: (i.product.images && i.product.images[0]) || '',
           size: i.size,
           quantity: i.qty,
           unitPrice: i.product.price
-        })),
-        subtotal: subtotal,
-        deliveryCharge: deliveryCharge,
-        total: finalTotal
+        }))
       })
-    }).then(r => r.json()).then(data => {
-      if (data && data.success) {
-        console.log('Order successfully saved to MongoDB:', data.orderId);
-      }
-    }).catch(err => {
-      console.warn('Notice: Order saved locally, API sync:', err.message);
     });
-  } catch (e) {}
 
-  cart = [];
-  saveCart();
+    const orderData = await createRes.json();
 
-  const container = document.getElementById('checkoutContent');
-  if (container) {
-    container.innerHTML = `
-      <div style="padding: 3.5rem 2rem; text-align:center;">
-        <div style="width:64px; height:64px; border-radius:50%; background:#111111; color:#FFFFFF; display:flex; align-items:center; justify-content:center; margin:0 auto 1.25rem auto; font-size:2rem;">✓</div>
-        <h2 style="font-family:var(--font-serif); font-size:2.25rem; margin-bottom:0.5rem;">Order Placed Successfully</h2>
-        <p style="color:var(--text-muted); font-size:1rem; margin-bottom:1.5rem;">Thank you for shopping with VASEVINE.</p>
-        
-        <div style="background:var(--bg-secondary); padding:1.25rem 2rem; display:inline-block; font-size:0.9rem; margin-bottom:1.75rem; text-align:left; border:1px solid var(--border-light); width:100%; max-width:440px;">
-          <div style="display:flex; justify-content:space-between; margin-bottom:0.4rem;">
-            <span style="color:var(--text-muted);">Order Number:</span>
-            <strong>#${orderNumber}</strong>
-          </div>
-          <div style="display:flex; justify-content:space-between; margin-bottom:0.4rem;">
-            <span style="color:var(--text-muted);">Delivery To:</span>
-            <strong>${deliveryLocation}</strong>
-          </div>
-          <div style="display:flex; justify-content:space-between; margin-bottom:0.4rem;">
-            <span style="color:var(--text-muted);">Delivery Charge:</span>
-            <strong>₹${deliveryCharge.toLocaleString('en-IN')}</strong>
-          </div>
-          <div style="display:flex; justify-content:space-between; border-top:1px solid var(--border-light); padding-top:0.5rem; margin-top:0.5rem; font-size:1.05rem;">
-            <strong>Total Paid:</strong>
-            <strong>₹${finalTotal.toLocaleString('en-IN')}</strong>
-          </div>
-        </div>
+    if (!createRes.ok || !orderData.success) {
+      throw new Error(orderData.error || 'Unable to initiate payment order.');
+    }
 
-        <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-          <button class="btn-primary" onclick="closeCheckoutModal()">RETURN TO HOMEPAGE</button>
-          <button class="btn-outline" onclick="closeCheckoutModal(); openOrderTrackingModal('${orderNumber}')">TRACK ORDER</button>
-        </div>
-      </div>
-    `;
+    // 2. Ensure Razorpay Standard Checkout SDK is available
+    if (typeof window.Razorpay === 'undefined') {
+      throw new Error('Razorpay checkout SDK could not be loaded. Please check your internet connection.');
+    }
+
+    // 3. Configure Razorpay Standard Checkout options
+    const rzpOptions = {
+      key: orderData.keyId,
+      amount: orderData.amount, // in paise
+      currency: orderData.currency || 'INR',
+      name: 'VASEVINE',
+      description: `Order #${orderData.orderId}`,
+      order_id: orderData.razorpayOrderId,
+      prefill: {
+        name: name,
+        email: email,
+        contact: cleanPhone
+      },
+      notes: {
+        orderId: orderData.orderId,
+        pincode: currentDeliveryInfo.pincode
+      },
+      theme: {
+        color: '#111111'
+      },
+      modal: {
+        ondismiss: function () {
+          console.log('Customer dismissed Razorpay checkout.');
+          if (placeOrderBtn) {
+            placeOrderBtn.disabled = false;
+            placeOrderBtn.innerHTML = 'PAY WITH RAZORPAY';
+          }
+        }
+      },
+      handler: async function (response) {
+        // Payment successful at gateway! Show verifying screen
+        const container = document.getElementById('checkoutContent');
+        if (container) {
+          container.innerHTML = `
+            <div style="padding: 4rem 2rem; text-align:center;">
+              <div style="width:48px; height:48px; border:3px solid #E5E5E0; border-top-color:#111111; border-radius:50%; animation:vvSpin 0.9s linear infinite; margin:0 auto 1.5rem auto;"></div>
+              <h3 style="font-family:var(--font-serif); font-size:1.75rem; margin-bottom:0.5rem;">Verifying Payment...</h3>
+              <p style="color:var(--text-muted); font-size:0.95rem;">Please do not close or refresh this window while we verify your transaction.</p>
+            </div>
+          `;
+        }
+
+        try {
+          // 4. Verify payment signature on server
+          const verifyRes = await fetch('/api/payment/verify-payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              orderId: orderData.orderId,
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature
+            })
+          });
+
+          const verifyData = await verifyRes.json();
+
+          if (!verifyRes.ok || !verifyData.success) {
+            throw new Error(verifyData.error || 'Payment signature verification failed.');
+          }
+
+          // 5. Successful order confirmation
+          const cartSnapshot = [...cart];
+          cart = [];
+          saveCart();
+
+          const deliveryLocation = `${currentDeliveryInfo.city}, ${currentDeliveryInfo.state} (${currentDeliveryInfo.pincode})`;
+
+          const confirmedOrder = {
+            id: orderData.orderId,
+            mobile: cleanPhone,
+            date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+            status: 'Order Placed',
+            paymentStatus: 'Paid',
+            razorpayPaymentId: response.razorpay_payment_id,
+            razorpayOrderId: response.razorpay_order_id,
+            estimatedDelivery: '3–5 business days',
+            items: cartSnapshot.map(i => ({
+              productId: i.product.id,
+              productName: i.product.name,
+              image: (i.product.images && i.product.images[0]) || '',
+              size: i.size,
+              quantity: i.qty,
+              price: i.product.price
+            })),
+            subtotal: orderData.subtotal,
+            delivery: orderData.deliveryCharge,
+            total: orderData.total,
+            customer: {
+              name: name,
+              phone: cleanPhone,
+              email: email,
+              address: address,
+              city: currentDeliveryInfo.city,
+              state: currentDeliveryInfo.state,
+              pincode: currentDeliveryInfo.pincode
+            },
+            timeline: [
+              { status: "Order Placed", date: "Just now", completed: true, current: true },
+              { status: "Order Confirmed", date: "Pending", completed: false },
+              { status: "Processing", date: "Pending", completed: false },
+              { status: "Shipped", date: "Pending", completed: false },
+              { status: "Out for Delivery", date: "Pending", completed: false },
+              { status: "Delivered", date: "Pending", completed: false }
+            ]
+          };
+
+          const storedOrders = JSON.parse(localStorage.getItem('vasevine_orders')) || [];
+          storedOrders.unshift(confirmedOrder);
+          localStorage.setItem('vasevine_orders', JSON.stringify(storedOrders));
+
+          if (container) {
+            container.innerHTML = `
+              <div style="padding: 3.5rem 2rem; text-align:center;">
+                <div style="width:64px; height:64px; border-radius:50%; background:#111111; color:#FFFFFF; display:flex; align-items:center; justify-content:center; margin:0 auto 1.25rem auto; font-size:2rem;">✓</div>
+                <h2 style="font-family:var(--font-serif); font-size:2.25rem; margin-bottom:0.5rem;">Order Placed Successfully</h2>
+                <p style="color:var(--text-muted); font-size:1rem; margin-bottom:1.5rem;">Thank you for shopping with VASEVINE. Your payment has been confirmed.</p>
+                
+                <div style="background:var(--bg-secondary); padding:1.25rem 2rem; display:inline-block; font-size:0.9rem; margin-bottom:1.75rem; text-align:left; border:1px solid var(--border-light); width:100%; max-width:440px;">
+                  <div style="display:flex; justify-content:space-between; margin-bottom:0.4rem;">
+                    <span style="color:var(--text-muted);">Order Number:</span>
+                    <strong>#${orderData.orderId}</strong>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; margin-bottom:0.4rem;">
+                    <span style="color:var(--text-muted);">Payment ID:</span>
+                    <strong style="font-size:0.8rem; font-family:monospace;">${response.razorpay_payment_id}</strong>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; margin-bottom:0.4rem;">
+                    <span style="color:var(--text-muted);">Payment Status:</span>
+                    <strong style="color:#15803D;">PAID</strong>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; margin-bottom:0.4rem;">
+                    <span style="color:var(--text-muted);">Delivery To:</span>
+                    <strong>${deliveryLocation}</strong>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; margin-bottom:0.4rem;">
+                    <span style="color:var(--text-muted);">Delivery Charge:</span>
+                    <strong>₹${orderData.deliveryCharge.toLocaleString('en-IN')}</strong>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; border-top:1px solid var(--border-light); padding-top:0.5rem; margin-top:0.5rem; font-size:1.05rem;">
+                    <strong>Total Paid:</strong>
+                    <strong>₹${orderData.total.toLocaleString('en-IN')}</strong>
+                  </div>
+                </div>
+
+                <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+                  <button class="btn-primary" onclick="closeCheckoutModal()">RETURN TO HOMEPAGE</button>
+                  <button class="btn-outline" onclick="closeCheckoutModal(); openOrderTrackingModal('${orderData.orderId}')">TRACK ORDER</button>
+                </div>
+              </div>
+            `;
+          }
+        } catch (verifyErr) {
+          console.error('Payment verification error:', verifyErr);
+          alert('Notice: Payment was received, but auto-verification encountered an issue: ' + verifyErr.message + '\nIf your account was debited, your order will be confirmed shortly. Razorpay Payment ID: ' + response.razorpay_payment_id);
+          closeCheckoutModal();
+        }
+      }
+    };
+
+    const rzp = new window.Razorpay(rzpOptions);
+    rzp.on('payment.failed', function (resp) {
+      console.error('Razorpay payment failed:', resp.error);
+      alert('Payment failed: ' + (resp.error.description || 'Transaction was declined. Please try again or use another payment method.'));
+      if (placeOrderBtn) {
+        placeOrderBtn.disabled = false;
+        placeOrderBtn.innerHTML = 'PAY WITH RAZORPAY';
+      }
+    });
+
+    rzp.open();
+  } catch (err) {
+    console.error('Error during checkout initiation:', err);
+    alert(err.message || 'Unable to proceed to payment. Please try again.');
+    if (placeOrderBtn) {
+      placeOrderBtn.disabled = false;
+      placeOrderBtn.innerHTML = 'PAY WITH RAZORPAY';
+    }
   }
 }
 
@@ -938,7 +1083,7 @@ async function getOrdersByMobile(mobileNumber) {
 
   // Query real MongoDB orders from Vercel Serverless API
   try {
-    const res = await fetch(`/api/orders/customer/${cleanMobile}`);
+    const res = await fetch(`/api/orders?customer=${cleanMobile}`);
     if (res.ok) {
       const data = await res.json();
       if (data && data.success && Array.isArray(data.orders) && data.orders.length > 0) {
@@ -948,6 +1093,7 @@ async function getOrdersByMobile(mobileNumber) {
           mobile: o.customer?.mobile,
           date: new Date(o.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
           status: o.orderStatus,
+          paymentStatus: o.paymentStatus || 'Pending',
           estimatedDelivery: o.orderStatus === 'Delivered' ? 'Delivered' : (o.orderStatus === 'Shipped' ? '1–2 business days' : '3–5 business days'),
           items: (o.items || []).map(i => ({
             productId: i.productId,
@@ -1093,6 +1239,11 @@ async function handleLookupOrders(e) {
 }
 
 // View 2: Orders List
+async function handleBackToOrders(mobile) {
+  const orders = await getOrdersByMobile(mobile);
+  renderOrdersListView(mobile, orders);
+}
+
 function renderOrdersListView(mobile, orders) {
   const container = document.getElementById('accountModalContent');
   if (!container) return;
@@ -1161,7 +1312,7 @@ function renderOrderDetailsView(orderId, fromMobile) {
   container.innerHTML = `
     <button class="modal-close-btn" onclick="closeAccountModal()">&times;</button>
     <div class="account-modal-body">
-      <button class="account-back-btn" onclick="renderOrdersListView('${fromMobile}', getOrdersByMobile('${fromMobile}'))">
+      <button class="account-back-btn" onclick="handleBackToOrders('${fromMobile}')">
         &larr; Back to My Orders
       </button>
 
@@ -1275,7 +1426,7 @@ function renderOrderTrackingView(orderId, fromMobile) {
         Shipment handled via VASEVINE Priority Logistics. Signature required upon delivery.
       </div>
 
-      <button class="btn-outline" style="width:100%;" onclick="renderOrdersListView('${fromMobile}', getOrdersByMobile('${fromMobile}'))">
+      <button class="btn-outline" style="width:100%;" onclick="handleBackToOrders('${fromMobile}')">
         VIEW ALL ORDERS
       </button>
     </div>

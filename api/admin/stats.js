@@ -40,6 +40,7 @@ module.exports = async (req, res) => {
         });
 
         const salesAggregation = await db.collection('orders').aggregate([
+          { $match: { $or: [{ paymentStatus: 'Paid' }, { paymentStatus: { $exists: false } }] } },
           { $group: { _id: null, totalSales: { $sum: '$total' } } }
         ]).toArray();
         const totalSales = salesAggregation.length > 0 ? salesAggregation[0].totalSales : 0;

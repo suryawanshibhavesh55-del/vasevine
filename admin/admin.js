@@ -189,6 +189,8 @@ async function fetchAdminOrders() {
 
     tbody.innerHTML = currentOrders.map(o => {
       const itemsCount = (o.items || []).reduce((sum, i) => sum + (Number(i.quantity) || 1), 0);
+      const payStatus = o.paymentStatus || 'Pending';
+      const payClass = (payStatus.toLowerCase() === 'paid') ? 'status-paid' : ((payStatus.toLowerCase() === 'failed') ? 'status-failed' : 'status-pending');
       return `
         <tr>
           <td><strong>#${o.orderId}</strong><br><span style="font-size:0.75rem; color:var(--text-muted);">${formatDate(o.createdAt)}</span></td>
@@ -196,7 +198,7 @@ async function fetchAdminOrders() {
           <td>${escapeHtml(o.shippingAddress?.city || '')}, ${escapeHtml(o.shippingAddress?.state || '')}<br><span style="font-size:0.78rem; color:var(--text-muted);">PIN: ${o.shippingAddress?.pincode || ''}</span></td>
           <td>${itemsCount} item${itemsCount > 1 ? 's' : ''}</td>
           <td><strong>\u20B9${(o.total || 0).toLocaleString('en-IN')}</strong></td>
-          <td><span style="font-size:0.78rem; text-transform:uppercase; font-weight:600; color:#555;">${o.paymentStatus || 'Pending'}</span></td>
+          <td><span class="status-pill ${payClass}">${payStatus}</span></td>
           <td><span class="status-pill status-${slugify(o.orderStatus)}">${o.orderStatus}</span></td>
           <td>
             <button class="btn-primary" style="padding:0.4rem 0.8rem; font-size:0.75rem;" onclick="openOrderModal('${o.orderId}')">
@@ -253,6 +255,32 @@ function openOrderModal(orderId) {
         <strong style="display:block; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); margin-bottom:0.5rem;">Shipping Address</strong>
         <div>${escapeHtml(order.shippingAddress?.address || '')}</div>
         <div>${escapeHtml(order.shippingAddress?.city || '')}, ${escapeHtml(order.shippingAddress?.state || '')} — ${order.shippingAddress?.pincode || ''}</div>
+      </div>
+    </div>
+
+    <!-- Payment Details Card -->
+    <div style="background:#fff; border:1px solid var(--border); padding:1rem; margin-bottom:1.5rem; font-size:0.88rem;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+        <strong style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted);">Payment Details</strong>
+        <span class="status-pill ${(order.paymentStatus || 'Pending').toLowerCase() === 'paid' ? 'status-paid' : ((order.paymentStatus || 'Pending').toLowerCase() === 'failed' ? 'status-failed' : 'status-pending')}">${order.paymentStatus || 'Pending'}</span>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+        <div>
+          <span style="color:var(--text-muted); font-size:0.78rem; display:block;">Gateway:</span>
+          <strong>${order.paymentGateway || 'Razorpay'}</strong>
+        </div>
+        <div>
+          <span style="color:var(--text-muted); font-size:0.78rem; display:block;">Payment Method:</span>
+          <strong>${order.paymentMethod ? String(order.paymentMethod).toUpperCase() : 'Online'}</strong>
+        </div>
+        <div>
+          <span style="color:var(--text-muted); font-size:0.78rem; display:block;">Razorpay Payment ID:</span>
+          <strong style="font-family:monospace; font-size:0.8rem; word-break:break-all;">${order.razorpayPaymentId || 'N/A'}</strong>
+        </div>
+        <div>
+          <span style="color:var(--text-muted); font-size:0.78rem; display:block;">Razorpay Order ID:</span>
+          <strong style="font-family:monospace; font-size:0.8rem; word-break:break-all;">${order.razorpayOrderId || 'N/A'}</strong>
+        </div>
       </div>
     </div>
 

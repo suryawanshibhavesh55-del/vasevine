@@ -1839,6 +1839,10 @@ img {
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes vvSpin {
+  to { transform: rotate(360deg); }
+}
+
 /* Responsive Categories */
 @media (max-width: 992px) {
   .category-cards-grid {

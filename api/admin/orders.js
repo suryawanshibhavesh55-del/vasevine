@@ -111,15 +111,21 @@ module.exports = async (req, res) => {
       }
 
       const status = req.query?.status || url.searchParams.get('status');
+      const paymentStatus = req.query?.paymentStatus || url.searchParams.get('paymentStatus');
       const search = req.query?.search || url.searchParams.get('search');
 
       const query = {};
       if (status && status !== 'all') {
         query.orderStatus = status;
       }
+      if (paymentStatus && paymentStatus !== 'all') {
+        query.paymentStatus = paymentStatus;
+      }
       if (search) {
         query.$or = [
           { orderId: { $regex: search, $options: 'i' } },
+          { razorpayPaymentId: { $regex: search, $options: 'i' } },
+          { razorpayOrderId: { $regex: search, $options: 'i' } },
           { 'customer.name': { $regex: search, $options: 'i' } },
           { 'customer.mobile': { $regex: search, $options: 'i' } }
         ];

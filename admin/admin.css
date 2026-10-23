@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   --bg-primary: #FAFAF7;
   --bg-surface: #FFFFFF;
   --bg-subtle: #F4F4F0;
@@ -313,6 +313,10 @@ body {
 .status-out-for-delivery { background: #FFFBEB; color: #B45309; }
 .status-delivered { background: #ECFDF5; color: #065F46; }
 .status-cancelled { background: #FEF2F2; color: #991B1B; }
+
+.status-paid { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; font-weight: 600; }
+.status-pending { background: #FFFBEB; color: #B45309; border: 1px solid #FDE68A; font-weight: 600; }
+.status-failed { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; font-weight: 600; }
 
 .status-active { background: #ECFDF5; color: #065F46; }
 .status-draft { background: #F3F4F6; color: #4B5563; }
