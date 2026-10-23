@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const { getDatabase } = require('../../lib/mongodb');
-const { getRazorpayInstance } = require('../../lib/razorpay');
+const { getRazorpayInstance, cleanKey } = require('../../lib/razorpay');
 const { validateDeliveryPincode } = require('../../lib/delivery');
 const { PRODUCTS } = require('../../js/products');
 const { ObjectId } = require('mongodb');
@@ -67,7 +67,7 @@ async function handleConfig(req, res) {
     return res.status(405).json({ success: false, error: 'Method not allowed' });
   }
 
-  const keyId = process.env.RAZORPAY_KEY_ID;
+  const keyId = cleanKey(process.env.RAZORPAY_KEY_ID);
   if (!keyId) {
     return res.status(500).json({
       success: false,
@@ -78,7 +78,7 @@ async function handleConfig(req, res) {
   // Safe public configuration only - NEVER EXPOSE KEY SECRET
   return res.status(200).json({
     success: true,
-    keyId: keyId.trim()
+    keyId
   });
 }
 
@@ -240,7 +240,18 @@ async function handleCreateOrder(req, res) {
         }
       });
     } catch (rzpErr) {
-      console.error('Razorpay Order Creation Error:', rzpErr);
+      const rzpCode = rzpErr?.error?.code || rzpErr?.code || 'GATEWAY_ERROR';
+      const rzpDesc = rzpErr?.error?.description || rzpErr?.message || 'Gateway error';
+      console.error('[Razorpay Order Creation Error]', {
+        action: 'create-order',
+        method: req.method,
+        stage: 'razorpay.orders.create',
+        errorName: rzpErr?.name || 'Error',
+        errorMessage: rzpErr?.message,
+        statusCode: rzpErr?.statusCode,
+        code: rzpCode,
+        description: rzpDesc
+      });
       return res.status(500).json({
         success: false,
         error: 'Unable to initiate payment gateway. Please verify connection and try again.'
@@ -299,7 +310,7 @@ async function handleCreateOrder(req, res) {
       razorpayOrderId: rzpOrder.id,
       amount: rzpOrder.amount, // in paise
       currency: rzpOrder.currency,
-      keyId: process.env.RAZORPAY_KEY_ID ? process.env.RAZORPAY_KEY_ID.trim() : '',
+      keyId: cleanKey(process.env.RAZORPAY_KEY_ID),
       customer: {
         name: newOrder.customer.name,
         email: newOrder.customer.email,
@@ -345,7 +356,7 @@ async function handleVerifyPayment(req, res) {
       });
     }
 
-    const keySecret = process.env.RAZORPAY_KEY_SECRET;
+    const keySecret = cleanKey(process.env.RAZORPAY_KEY_SECRET);
     if (!keySecret) {
       return res.status(500).json({
         success: false,
@@ -356,7 +367,7 @@ async function handleVerifyPayment(req, res) {
     // 1. Cryptographic HMAC SHA256 Signature Verification
     const bodyPayload = `${razorpayOrderId}|${razorpayPaymentId}`;
     const generatedSignature = crypto
-      .createHmac('sha256', keySecret.trim())
+      .createHmac('sha256', keySecret)
       .update(bodyPayload)
       .digest('hex');
 
@@ -530,17 +541,17 @@ async function handleWebhook(req, res) {
 
   try {
     const rawBody = await getRawBody(req);
-    const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
+    const webhookSecret = cleanKey(process.env.RAZORPAY_WEBHOOK_SECRET);
     const signature = req.headers['x-razorpay-signature'];
 
     // 1. Signature verification if webhook secret is configured
-    if (webhookSecret && webhookSecret.trim()) {
+    if (webhookSecret) {
       if (!signature) {
         return res.status(400).json({ success: false, error: 'Missing x-razorpay-signature header' });
       }
 
       const expectedSignature = crypto
-        .createHmac('sha256', webhookSecret.trim())
+        .createHmac('sha256', webhookSecret)
         .update(rawBody)
         .digest('hex');
 
