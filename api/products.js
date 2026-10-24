@@ -34,7 +34,7 @@ module.exports = async (req, res) => {
     if (id) {
       let product = null;
       try {
-        const { db } = await getDatabase();
+        const { db } = await getDatabase('vasevine');
         product = await db.collection('products').findOne(buildIdQuery(id));
       } catch (dbErr) {
         console.warn('MongoDB fallback for product detail:', dbErr.message);
@@ -58,8 +58,8 @@ module.exports = async (req, res) => {
 
     let products = [];
     try {
-      const { db } = await getDatabase();
-      const query = { status: 'active' };
+      const { db } = await getDatabase('vasevine');
+      const query = { status: { $nin: ['archived', 'draft', 'deleted'] } };
 
       if (category && category !== 'All Collections' && category !== 'All') {
         if (category === 'uncategorized') {
@@ -102,6 +102,15 @@ module.exports = async (req, res) => {
           products = products.filter(p => p.category === category);
         }
       }
+    }
+
+    // Safeguard: if query returned 0 products for general catalog, fall back to static catalog
+    if ((!products || products.length === 0) && (!category || category === 'All Collections' || category === 'All')) {
+      const { PRODUCTS } = require('../js/products');
+      products = (PRODUCTS || []).filter(p => !p.status || p.status === 'active').map(p => ({
+        ...p,
+        category: VALID_CATEGORIES.includes(p.category) ? p.category : null
+      }));
     }
 
     return res.status(200).json({

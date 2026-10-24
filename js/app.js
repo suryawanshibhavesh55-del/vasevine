@@ -38,16 +38,18 @@ async function loadLiveProducts() {
     const res = await fetch('/api/products');
     if (res.ok) {
       const data = await res.json();
-      if (data && data.success && Array.isArray(data.products)) {
+      if (data && data.success && Array.isArray(data.products) && data.products.length > 0) {
         // Only load active products onto the public storefront
         const activeProducts = data.products.filter(p => !p.status || p.status === 'active');
-        PRODUCTS.length = 0;
-        activeProducts.forEach(p => PRODUCTS.push(p));
-        updateCategoryCardCounts();
-        if (selectedHomepageCategory) {
-          handleCategoryCardClick(selectedHomepageCategory);
+        if (activeProducts.length > 0) {
+          PRODUCTS.length = 0;
+          activeProducts.forEach(p => PRODUCTS.push(p));
+          updateCategoryCardCounts();
+          if (selectedHomepageCategory) {
+            handleCategoryCardClick(selectedHomepageCategory);
+          }
+          renderShopGrid();
         }
-        renderShopGrid();
       }
     }
   } catch (err) {
