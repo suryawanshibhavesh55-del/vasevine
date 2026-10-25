@@ -35,6 +35,1410 @@ const CATEGORIES = [
 
 const PRODUCTS = [
   {
+    "id": "v-cp-094",
+    "name": "Sculpted Emerald Couture Silhouette",
+    "price": 21000,
+    "originalPrice": 26250,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Micro-Pleated Metallic Tissue & Silk",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_094.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:13:11.936Z",
+    "updatedAt": "2026-10-25T09:11:31.937Z"
+  },
+  {
+    "id": "v-cp-095",
+    "name": "Royal Ivory Cascade Ensemble",
+    "price": 18000,
+    "originalPrice": 22500,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Pure Duchesse Satin & Hand Embroidery",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_095.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:13:10.936Z",
+    "updatedAt": "2026-10-25T09:11:31.937Z"
+  },
+  {
+    "id": "v-cp-096",
+    "name": "Noir Pleated Statement Gown",
+    "price": 25000,
+    "originalPrice": 31250,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Sculpted Pleated Georgette & Satin",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_096.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:13:09.936Z",
+    "updatedAt": "2026-10-25T09:11:31.937Z"
+  },
+  {
+    "id": "v-cp-097",
+    "name": "Champagne Shimmer Couture Gown",
+    "price": 24000,
+    "originalPrice": 30000,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Lustrous Metallic Lurex & Micro-Pleats",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_097.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:13:08.936Z",
+    "updatedAt": "2026-10-25T09:11:31.937Z"
+  },
+  {
+    "id": "v-cp-098",
+    "name": "Crimson Wave Sculpted Ensemble",
+    "price": 22000,
+    "originalPrice": 27500,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Structured Metallic Cord Embroidery & Satin",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_098.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:13:07.936Z",
+    "updatedAt": "2026-10-25T09:11:31.937Z"
+  },
+  {
+    "id": "v-cp-099",
+    "name": "Midnight Blue Peplum Couture",
+    "price": 19000,
+    "originalPrice": 23750,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Pleated Organza, Bugle Beads & Pure Satin",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_099.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:13:06.936Z",
+    "updatedAt": "2026-10-25T09:11:31.937Z"
+  },
+  {
+    "id": "v-cp-100",
+    "name": "Rose Gold Structured Corset Gown",
+    "price": 26000,
+    "originalPrice": 32500,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Liquid Satin & Precision Zari Detailing",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_100.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:13:05.936Z",
+    "updatedAt": "2026-10-25T09:11:31.937Z"
+  },
+  {
+    "id": "v-cp-101",
+    "name": "Bronze Metallic Fluted Ensemble",
+    "price": 20000,
+    "originalPrice": 25000,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Metallic Tissue Georgette & Crystals",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_101.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:13:04.936Z",
+    "updatedAt": "2026-10-25T09:11:31.937Z"
+  },
+  {
+    "id": "v-cp-102",
+    "name": "Azure Drape Sculpted Silhouette",
+    "price": 23000,
+    "originalPrice": 28750,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Pleated Georgette & Hand-Embroidered Ribbons",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_102.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:13:03.936Z",
+    "updatedAt": "2026-10-25T09:11:31.937Z"
+  },
+  {
+    "id": "v-cp-103",
+    "name": "Opulent Gold Wing Couture",
+    "price": 25000,
+    "originalPrice": 31250,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Structured Dimensional Corset & Duchesse Satin",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_103.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:13:02.936Z",
+    "updatedAt": "2026-10-25T09:11:31.937Z"
+  },
+  {
+    "id": "v-cp-104",
+    "name": "Wine Criss-Cross Pleated Gown",
+    "price": 17000,
+    "originalPrice": 21250,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Fine Pleated Tulle & Liquid Satin",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_104.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:13:01.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-105",
+    "name": "Sapphire Sculptural Trail Gown",
+    "price": 24000,
+    "originalPrice": 30000,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Micro-Pleated Silk Georgette & Sculpted Bodice",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_105.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:13:00.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-106",
+    "name": "Pastel Mint Organza Silhouette",
+    "price": 18000,
+    "originalPrice": 22500,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Handcrafted Foliage Applique & Satin Crepe",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_106.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:59.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-107",
+    "name": "Charcoal Metallic Swirl Gown",
+    "price": 22000,
+    "originalPrice": 27500,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Metallic Foil Georgette & Lurex",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_107.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:58.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-108",
+    "name": "Blush Pink Waterfall Gown",
+    "price": 20000,
+    "originalPrice": 25000,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Ombre Fluted Pleated Silk & Crepe",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_108.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:57.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-109",
+    "name": "Fuchsia Micro-Pleated Drape Ensemble",
+    "price": 19000,
+    "originalPrice": 23750,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Zardozi Embroidered Silk & Flowing Georgette",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_109.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:56.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-110",
+    "name": "Gunmetal Dimensional Bodice Gown",
+    "price": 25000,
+    "originalPrice": 31250,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Pleated Metallic Shimmer Foil & Crepe",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_110.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:55.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-111",
+    "name": "Coral Wave Draped Silhouette",
+    "price": 21000,
+    "originalPrice": 26250,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Gradated Chiffon & Sculpted Bodice",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_111.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:54.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-112",
+    "name": "Liquid Silver Goddess Gown",
+    "price": 26000,
+    "originalPrice": 32500,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Liquid Satin & Sequin Mesh Lurex",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_112.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:53.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-113",
+    "name": "Elysian Velvet Contour Ensemble",
+    "price": 22000,
+    "originalPrice": 27500,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Italian Velvet & Lurex Tissue",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_113.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:52.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-114",
+    "name": "Amber Shimmer Sculpted Gown",
+    "price": 23000,
+    "originalPrice": 28750,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Lurex Tissue & Hand-Set Crystals",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_114.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:51.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-115",
+    "name": "Cobalt Radiance Couture Silhouette",
+    "price": 20000,
+    "originalPrice": 25000,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Raw Silk & Zari Thread Embroidery",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_115.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:50.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-116",
+    "name": "Peacock Metallic Fan Gown",
+    "price": 24000,
+    "originalPrice": 30000,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Heavy Satin & Chiffon Blend",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_116.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:49.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-117",
+    "name": "Scarlet Regal Drape Silhouette",
+    "price": 27000,
+    "originalPrice": 33750,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Silk Organza & Tulle with Crystal Accents",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_117.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:48.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-118",
+    "name": "Orchid Pleated Cascade Ensemble",
+    "price": 18000,
+    "originalPrice": 22500,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Satin & Micro-Pleated Chiffon",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_118.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:47.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-119",
+    "name": "Molten Bronze Sculpted Corset",
+    "price": 25000,
+    "originalPrice": 31250,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Sculpted Wave Corset & Pure Silk Satin",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_119.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:46.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-120",
+    "name": "Lilac Ethereal Fluted Gown",
+    "price": 21000,
+    "originalPrice": 26250,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Organza Satin & Hand-Sewn Seed Pearls",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_120.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:45.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-121",
+    "name": "Midnight Noir Crystal Silhouette",
+    "price": 28000,
+    "originalPrice": 35000,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Fine Pleated Tulle, Seed Pearls & Liquid Satin",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_121.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:44.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-122",
+    "name": "Champagne Leaf Applique Ensemble",
+    "price": 23000,
+    "originalPrice": 28750,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Handcrafted Foliage Applique & Satin Crepe",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_122.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:43.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-123",
+    "name": "Seraphina Structured Wave Gown",
+    "price": 16000,
+    "originalPrice": 20000,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Micro-Pleated Silk Georgette",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_123.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:42.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-124",
+    "name": "Aura Sunset Pleated Silhouette",
+    "price": 22000,
+    "originalPrice": 27500,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Ombre Fluted Pleated Silk & Crepe",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_124.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:41.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-125",
+    "name": "Plum Sculptural Bodice Gown",
+    "price": 19000,
+    "originalPrice": 23750,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Structured Metallic Cord Embroidery & Satin",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_125.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:40.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-126",
+    "name": "Golden Goddess Trail Ensemble",
+    "price": 25000,
+    "originalPrice": 31250,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Lustrous Metallic Lurex & Micro-Pleats",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_126.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:39.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-127",
+    "name": "Celeste Pearl Embellished Silhouette",
+    "price": 20000,
+    "originalPrice": 25000,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Pleated Organza, Bugle Beads & Pure Satin",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_127.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:38.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-128",
+    "name": "Burgundy Infinity Corset Gown",
+    "price": 22000,
+    "originalPrice": 27500,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Sculpted Pleated Georgette & Satin",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_128.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:37.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-129",
+    "name": "Verdant Sculpted Drape Ensemble",
+    "price": 26000,
+    "originalPrice": 32500,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Liquid Satin & Micro-Pleated Drape",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_129.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:36.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-130",
+    "name": "Tuscan Sun Shimmer Silhouette",
+    "price": 19000,
+    "originalPrice": 23750,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Metallic Tissue Georgette & Crystals",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_130.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:35.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-131",
+    "name": "Onyx Structured One-Shoulder Gown",
+    "price": 24000,
+    "originalPrice": 30000,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Pleated Georgette & Hand-Embroidered Sequin Ribbons",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_131.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:34.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-132",
+    "name": "Sienna Pleated Couture Silhouette",
+    "price": 27000,
+    "originalPrice": 33750,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Crystal-Embellished Pleated Organza & Royal Satin",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_132.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:33.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-133",
+    "name": "Gilded Orchid Sculpted Ensemble",
+    "price": 21000,
+    "originalPrice": 26250,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Structured Dimensional Bodice & Satin",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_133.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:32.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-134",
+    "name": "Magenta Radiance Draped Silhouette",
+    "price": 25000,
+    "originalPrice": 31250,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Micro-Pleated Silk Georgette & Sculpted Bodice",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_134.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:31.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-135",
+    "name": "Dusk Silver Mirage Ensemble",
+    "price": 28000,
+    "originalPrice": 35000,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Metallic Foil Georgette & Heavy Satin",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_135.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:30.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-136",
+    "name": "Imperial Rose Contour Gown",
+    "price": 20000,
+    "originalPrice": 25000,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Zardozi Embroidered Silk & Flowing Georgette",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_136.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:29.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-137",
+    "name": "Lavender Sculptural Fan Ensemble",
+    "price": 19000,
+    "originalPrice": 23750,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Sculpted Fan Bodice & Silk Crepe Trousers",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_137.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:28.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-138",
+    "name": "Blush Blossom Embroidered Silhouette",
+    "price": 23000,
+    "originalPrice": 28750,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Soft Georgette with Linear Embroidery",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_138.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:27.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-139",
+    "name": "Saffron Pleated Waterfall Gown",
+    "price": 22000,
+    "originalPrice": 27500,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Gradated Chiffon & Sculpted Bodice",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_139.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:26.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-140",
+    "name": "Starlight Metallic Drape Ensemble",
+    "price": 24000,
+    "originalPrice": 30000,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Liquid Satin & Sequin Mesh Lurex",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_140.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:25.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-141",
+    "name": "Obsidian Wave Sculpted Gown",
+    "price": 26000,
+    "originalPrice": 32500,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Italian Velvet & Lurex Tissue",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_141.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:24.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-142",
+    "name": "Velvet Rose Draped Silhouette",
+    "price": 25000,
+    "originalPrice": 31250,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Pleated Organza, Bugle Beads & Pure Satin",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_142.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:23.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-143",
+    "name": "Solstice Gold Pleated Gown",
+    "price": 24000,
+    "originalPrice": 30000,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Metallic Tissue Georgette & Crystals",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_143.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:22.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-144",
+    "name": "Mariposa Sculptured Couture Ensemble",
+    "price": 21000,
+    "originalPrice": 26250,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Micro-Pleated Silk Georgette & Sculpted Bodice",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_144.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:21.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-145",
+    "name": "Celestial Blue Contour Gown",
+    "price": 22000,
+    "originalPrice": 27500,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Fine Pleated Tulle, Seed Pearls & Liquid Satin",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_145.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:20.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-146",
+    "name": "Ruby Empress Structured Silhouette",
+    "price": 27000,
+    "originalPrice": 33750,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Crystal-Embellished Pleated Organza & Royal Satin",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_146.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:19.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
+    "id": "v-cp-147",
+    "name": "Periwinkle Sculptural Draped Ensemble",
+    "price": 20000,
+    "originalPrice": 25000,
+    "description": "A refined VASEVINE statement silhouette crafted with structured detailing, luxury drapery, and a graceful contemporary finish.",
+    "fabric": "Sculpted Wave Corset & Pure Silk Satin",
+    "category": null,
+    "sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 20,
+    "images": [
+      "assets/products/client_prod_147.jpg"
+    ],
+    "status": "active",
+    "isBestseller": false,
+    "isNewArrival": true,
+    "createdAt": "2026-10-25T09:12:18.936Z",
+    "updatedAt": "2026-10-25T09:11:31.938Z"
+  },
+  {
     "originalPrice": 3124,
     "id": "v-cp-001",
     "sizes": [
