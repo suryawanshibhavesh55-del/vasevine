@@ -44,6 +44,17 @@ async function loadLiveProducts() {
         if (activeProducts.length > 0) {
           PRODUCTS.length = 0;
           activeProducts.forEach(p => PRODUCTS.push(p));
+          // Strictly sort newly added products to the top without mixing
+          PRODUCTS.sort((a, b) => {
+            const aIsNew = (a.id >= 'v-cp-094' && a.id <= 'v-cp-147') || !a.category;
+            const bIsNew = (b.id >= 'v-cp-094' && b.id <= 'v-cp-147') || !b.category;
+            if (aIsNew && !bIsNew) return -1;
+            if (!aIsNew && bIsNew) return 1;
+            if (aIsNew && bIsNew) return a.id.localeCompare(b.id);
+            const aTime = new Date(a.createdAt || 0).getTime();
+            const bTime = new Date(b.createdAt || 0).getTime();
+            return bTime - aTime;
+          });
           updateCategoryCardCounts();
           if (selectedHomepageCategory) {
             handleCategoryCardClick(selectedHomepageCategory);
@@ -181,6 +192,18 @@ function renderShopGrid(catFilter = activeCategory) {
   let filtered = PRODUCTS;
   if (activeCategory && activeCategory !== 'All Collections') {
     filtered = PRODUCTS.filter(p => p.category === activeCategory);
+  } else {
+    // Strictly keep newly added products at the top of All Collections without mixing
+    filtered = [...PRODUCTS].sort((a, b) => {
+      const aIsNew = (a.id >= 'v-cp-094' && a.id <= 'v-cp-147') || !a.category;
+      const bIsNew = (b.id >= 'v-cp-094' && b.id <= 'v-cp-147') || !b.category;
+      if (aIsNew && !bIsNew) return -1;
+      if (!aIsNew && bIsNew) return 1;
+      if (aIsNew && bIsNew) return a.id.localeCompare(b.id);
+      const aTime = new Date(a.createdAt || 0).getTime();
+      const bTime = new Date(b.createdAt || 0).getTime();
+      return bTime - aTime;
+    });
   }
 
   if (filtered.length === 0) {

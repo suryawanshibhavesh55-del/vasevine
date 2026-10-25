@@ -87,6 +87,20 @@ module.exports = async (req, res) => {
         ...p,
         category: VALID_CATEGORIES.includes(p.category) ? p.category : null
       }));
+
+      // Ensure newly added products (v-cp-094..147 / uncategorized) are strictly on top without mixing with earlier products
+      if (!category || category === 'All Collections' || category === 'All') {
+        products.sort((a, b) => {
+          const aIsNew = (a.id >= 'v-cp-094' && a.id <= 'v-cp-147') || !a.category;
+          const bIsNew = (b.id >= 'v-cp-094' && b.id <= 'v-cp-147') || !b.category;
+          if (aIsNew && !bIsNew) return -1;
+          if (!aIsNew && bIsNew) return 1;
+          if (aIsNew && bIsNew) return a.id.localeCompare(b.id);
+          const aTime = new Date(a.createdAt || 0).getTime();
+          const bTime = new Date(b.createdAt || 0).getTime();
+          return bTime - aTime;
+        });
+      }
     } catch (dbErr) {
       console.warn('MongoDB connection fallback:', dbErr.message);
       // Fallback to static catalog if DB connection not ready yet
