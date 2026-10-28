@@ -1,4 +1,5 @@
 const { getDatabase } = require('../lib/mongodb');
+const { sendOrderNotificationEmail } = require('../lib/email');
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -139,6 +140,15 @@ module.exports = async (req, res) => {
       try {
         const { db } = await getDatabase();
         await db.collection('orders').insertOne(newOrder);
+
+        // Only send email if payment is already marked Paid
+        if (newOrder.paymentStatus === 'Paid') {
+          try {
+            await sendOrderNotificationEmail(newOrder, db);
+          } catch (emailErr) {
+            console.error('[Orders API] Non-blocking email notification error:', emailErr.message);
+          }
+        }
       } catch (dbErr) {
         console.warn('MongoDB order insert warning (falling back to response):', dbErr.message);
       }

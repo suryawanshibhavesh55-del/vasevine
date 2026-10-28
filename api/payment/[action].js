@@ -4,6 +4,7 @@ const { getRazorpayInstance, cleanKey } = require('../../lib/razorpay');
 const { validateDeliveryPincode } = require('../../lib/delivery');
 const { PRODUCTS } = require('../../js/products');
 const { ObjectId } = require('mongodb');
+const { sendOrderNotificationEmail } = require('../../lib/email');
 
 function buildIdQuery(rawId) {
   if (!rawId) return { _id: null };
@@ -517,6 +518,21 @@ async function handleVerifyPayment(req, res) {
       }
     }
 
+    // 8. Send owner notification email via Resend (strictly non-blocking and idempotent)
+    const confirmedOrder = updatedDoc || {
+      ...existingOrder,
+      paymentStatus: 'Paid',
+      orderStatus: 'Order Confirmed',
+      razorpayPaymentId,
+      razorpayOrderId
+    };
+
+    try {
+      await sendOrderNotificationEmail(confirmedOrder, db);
+    } catch (emailErr) {
+      console.error('[Payment Verify] Non-blocking email notification error:', emailErr.message);
+    }
+
     return res.status(200).json({
       success: true,
       message: 'Payment verified and order confirmed successfully',
@@ -662,6 +678,16 @@ async function handleWebhook(req, res) {
                 } catch (stockErr) {}
               }
             }
+          }
+
+          // Send owner notification email via Resend (strictly idempotent)
+          try {
+            const paidOrder = await db.collection('orders').findOne({ _id: existingOrder._id });
+            if (paidOrder) {
+              await sendOrderNotificationEmail(paidOrder, db);
+            }
+          } catch (emailErr) {
+            console.error('[Webhook] Non-blocking email notification error:', emailErr.message);
           }
         }
       }
