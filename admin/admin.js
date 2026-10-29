@@ -258,6 +258,19 @@ function openOrderModal(orderId) {
       </div>
     </div>
 
+    <!-- Customer Special Requirements / Note -->
+    ${order.customerNote ? `
+    <div style="background:#FFFBEB; border:1px solid #FDE68A; padding:1rem; margin-bottom:1.5rem; font-size:0.88rem; border-radius:4px;">
+      <strong style="display:block; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em; color:#B45309; margin-bottom:0.4rem;">CUSTOMER REQUIREMENTS / ORDER NOTES</strong>
+      <div style="color:#78350F; white-space:pre-wrap; line-height:1.4;">${escapeHtml(order.customerNote)}</div>
+    </div>
+    ` : `
+    <div style="background:#FAFAFA; border:1px solid var(--border); padding:0.75rem 1rem; margin-bottom:1.5rem; font-size:0.82rem; color:var(--text-muted);">
+      <span style="font-weight:600; text-transform:uppercase; font-size:0.75rem; letter-spacing:0.05em; display:block; margin-bottom:2px;">Special Requirements:</span>
+      No special requirements provided.
+    </div>
+    `}
+
     <!-- Payment Details Card -->
     <div style="background:#fff; border:1px solid var(--border); padding:1rem; margin-bottom:1.5rem; font-size:0.88rem;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">

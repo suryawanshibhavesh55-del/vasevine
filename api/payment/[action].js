@@ -5,6 +5,7 @@ const { validateDeliveryPincode } = require('../../lib/delivery');
 const { PRODUCTS } = require('../../js/products');
 const { ObjectId } = require('mongodb');
 const { sendOrderNotificationEmail } = require('../../lib/email');
+const { calculateProductPrice } = require('../../lib/pricing');
 
 function buildIdQuery(rawId) {
   if (!rawId) return { _id: null };
@@ -99,8 +100,12 @@ async function handleCreateOrder(req, res) {
     const {
       customer,
       shippingAddress,
-      items
+      items,
+      customerNote,
+      orderNotes
     } = req.body || {};
+
+    const cleanCustomerNote = (customerNote || orderNotes || '').trim() || null;
 
     // 1. Validate customer details
     if (!customer || !customer.name || !customer.mobile) {
@@ -186,24 +191,27 @@ async function handleCreateOrder(req, res) {
         });
       }
 
-      const realPrice = Number(productDoc.price);
-      if (isNaN(realPrice) || realPrice <= 0) {
+      const basePrice = Number(productDoc.price);
+      if (isNaN(basePrice) || basePrice <= 0) {
         return res.status(400).json({
           success: false,
           error: `Invalid pricing detected for product "${productDoc.name}".`
         });
       }
 
+      const selectedSize = item.size || item.selectedSize || 'M';
+      const finalUnitPrice = calculateProductPrice(productDoc, selectedSize);
       const qty = Math.max(1, parseInt(item.quantity || item.qty || 1, 10));
-      subtotal += realPrice * qty;
+      subtotal += finalUnitPrice * qty;
 
       orderSnapshotItems.push({
         productId: productDoc.id || String(productDoc._id),
         productName: productDoc.name,
-        selectedSize: item.size || 'M',
-        size: item.size || 'M',
+        selectedSize: selectedSize,
+        size: selectedSize,
         quantity: qty,
-        unitPrice: realPrice,
+        unitPrice: finalUnitPrice,
+        basePrice: basePrice,
         productImage: (productDoc.images && productDoc.images[0]) || item.productImage || '',
         category: productDoc.category || null
       });
@@ -276,6 +284,7 @@ async function handleCreateOrder(req, res) {
         state: (deliveryValidation.state || shippingAddress.state || '').trim(),
         pincode: deliveryValidation.pincode
       },
+      customerNote: cleanCustomerNote,
       items: orderSnapshotItems,
       subtotal,
       deliveryCharge,

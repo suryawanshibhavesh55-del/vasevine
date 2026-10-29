@@ -15,6 +15,71 @@ const SITE_CATEGORIES = [
   { slug: 'cordset', name: 'CORDSET', label: 'Cordset' }
 ];
 
+// Centralized Size-Based Surcharge Service
+const COLLECTION_SURCHARGES = {
+  'cordset': 3000,
+  'cord-set': 3000,
+  'cord set': 3000,
+  'cord_set': 3000,
+  'gown': 4000,
+  'gowns': 4000,
+  'lehenga': 7000,
+  'lehengas': 7000,
+  'draped-saree': 5000,
+  'draped saree': 5000,
+  'draped_saree': 5000,
+  'saree': 5000,
+  'sarees': 5000,
+  'dress': 3000,
+  'dresses': 3000,
+  'short-dress': 3000,
+  'short dress': 3000,
+  'short_dress': 3000
+};
+
+function isSizeAbove2XL(size) {
+  if (!size) return false;
+  const s = String(size).trim().toUpperCase();
+  if (['XS', 'S', 'M', 'L', 'XL', 'XXL', '2XL', 'XXS', 'FREE', 'FS'].includes(s)) {
+    return false;
+  }
+  const numXlMatch = s.match(/^(\d+)XL$/);
+  if (numXlMatch) {
+    return parseInt(numXlMatch[1], 10) >= 3;
+  }
+  const xMatch = s.match(/^(X+)L$/);
+  if (xMatch) {
+    return xMatch[1].length >= 3;
+  }
+  return false;
+}
+
+function getCollectionSurcharge(category) {
+  if (!category) return 0;
+  const key = String(category).trim().toLowerCase();
+  return COLLECTION_SURCHARGES[key] || 0;
+}
+
+function calculateProductPrice(product, size) {
+  if (!product) return 0;
+  const basePrice = Number(product.price) || 0;
+  if (!isSizeAbove2XL(size)) {
+    return basePrice;
+  }
+  const surcharge = getCollectionSurcharge(product.category);
+  return basePrice + surcharge;
+}
+
+function getCartItemUnitPrice(item) {
+  if (item && typeof item.unitPrice === 'number' && item.unitPrice > 0) {
+    return item.unitPrice;
+  }
+  if (item && item.product) {
+    return calculateProductPrice(item.product, item.size);
+  }
+  return 0;
+}
+
 let activeCategory = 'All Collections';
 let selectedHomepageCategory = null;
 let selectedProduct = null;
@@ -240,6 +305,19 @@ function openProductModal(productId) {
 
   if (!modal || !container) return;
 
+  // Preserve existing product sizes and ensure 3XL, 4XL, 5XL are available
+  let productSizes = (selectedProduct.sizes && selectedProduct.sizes.length)
+    ? [...selectedProduct.sizes]
+    : ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+
+  ['3XL', '4XL', '5XL'].forEach(ps => {
+    if (!productSizes.includes(ps)) {
+      productSizes.push(ps);
+    }
+  });
+
+  const initialPrice = calculateProductPrice(selectedProduct, selectedSize);
+
   container.innerHTML = `
     <button class="modal-close-btn" onclick="closeProductModal()">&times;</button>
     <div class="product-detail-grid">
@@ -257,20 +335,21 @@ function openProductModal(productId) {
       </div>
 
       <div class="detail-info">
-        <span class="detail-category">${selectedProduct.category}</span>
+        <span class="detail-category">${selectedProduct.category || ''}</span>
         <h2 class="detail-title">${selectedProduct.name}</h2>
         <div class="detail-price-row">
-          <span class="detail-price">₹${selectedProduct.price.toLocaleString('en-IN')}</span>
+          <span class="detail-price">₹${initialPrice.toLocaleString('en-IN')}</span>
         </div>
+        <div id="sizeSurchargeNotice" style="display:none; font-size:0.8rem; color:var(--text-muted); margin-top:-0.5rem; margin-bottom:1rem;"></div>
         <p class="detail-desc">${selectedProduct.description}</p>
         
         <div class="size-selector">
           <div class="size-selector-label">
             <span>SELECT SIZE</span>
-            <span style="color:var(--text-muted); cursor:pointer; text-decoration:underline;" onclick="alert('Standard Indian Ethnic Sizing Chart applies. XS: 32, S: 34, M: 36, L: 38, XL: 40, XXL: 42')">Size Guide</span>
+            <span style="color:var(--text-muted); cursor:pointer; text-decoration:underline;" onclick="alert('Standard Indian Ethnic Sizing Chart applies. XS: 32, S: 34, M: 36, L: 38, XL: 40, XXL: 42, 3XL: 44, 4XL: 46, 5XL: 48')">Size Guide</span>
           </div>
           <div class="size-buttons">
-            ${selectedProduct.sizes.map(size => `
+            ${productSizes.map(size => `
               <button class="size-btn ${size === selectedSize ? 'active' : ''}" onclick="selectSize(this, '${size}')">${size}</button>
             `).join('')}
           </div>
@@ -308,6 +387,27 @@ function selectSize(btn, size) {
   document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   selectedSize = size;
+  updateModalPriceDisplay();
+}
+
+function updateModalPriceDisplay() {
+  if (!selectedProduct) return;
+  const priceEl = document.querySelector('.detail-price');
+  if (priceEl) {
+    const finalPrice = calculateProductPrice(selectedProduct, selectedSize);
+    priceEl.textContent = `₹${finalPrice.toLocaleString('en-IN')}`;
+  }
+
+  const noticeEl = document.getElementById('sizeSurchargeNotice');
+  if (noticeEl) {
+    const surcharge = isSizeAbove2XL(selectedSize) ? getCollectionSurcharge(selectedProduct.category) : 0;
+    if (surcharge > 0) {
+      noticeEl.textContent = `${selectedSize} price includes ₹${surcharge.toLocaleString('en-IN')} size surcharge`;
+      noticeEl.style.display = 'block';
+    } else {
+      noticeEl.style.display = 'none';
+    }
+  }
 }
 
 function updateDetailQty(delta) {
@@ -344,11 +444,13 @@ function addToCartFromModal(buyNow = false) {
 }
 
 function addToCart(product, size, qty) {
+  const unitPrice = calculateProductPrice(product, size);
   const existingIdx = cart.findIndex(item => item.product.id === product.id && item.size === size);
   if (existingIdx > -1) {
     cart[existingIdx].qty += qty;
+    cart[existingIdx].unitPrice = unitPrice;
   } else {
-    cart.push({ product, size, qty });
+    cart.push({ product, size, qty, unitPrice });
   }
 
   saveCart();
@@ -418,7 +520,8 @@ function renderCartDrawer() {
 
   let subtotal = 0;
   container.innerHTML = cart.map((item, idx) => {
-    const itemTotal = item.product.price * item.qty;
+    const unitPrice = getCartItemUnitPrice(item);
+    const itemTotal = unitPrice * item.qty;
     subtotal += itemTotal;
     return `
       <div class="cart-item">
@@ -546,7 +649,7 @@ function openCheckoutModal() {
   }
 
   currentDeliveryInfo = null;
-  const subtotal = cart.reduce((sum, i) => sum + i.product.price * i.qty, 0);
+  const subtotal = cart.reduce((sum, i) => sum + getCartItemUnitPrice(i) * i.qty, 0);
 
   container.innerHTML = `
     <button class="modal-close-btn" onclick="closeCheckoutModal()">&times;</button>
@@ -555,12 +658,15 @@ function openCheckoutModal() {
       
       <div class="order-summary-box">
         <h4 style="font-family:var(--font-serif); font-size:1.15rem; margin-bottom:0.75rem;">Order Summary</h4>
-        ${cart.map(i => `
-          <div class="summary-row">
-            <span>${i.product.name} (${i.size}) x ${i.qty}</span>
-            <span>₹${(i.product.price * i.qty).toLocaleString('en-IN')}</span>
-          </div>
-        `).join('')}
+        ${cart.map(i => {
+          const unitPrice = getCartItemUnitPrice(i);
+          return `
+            <div class="summary-row">
+              <span>${i.product.name} (${i.size}) x ${i.qty}</span>
+              <span>₹${(unitPrice * i.qty).toLocaleString('en-IN')}</span>
+            </div>
+          `;
+        }).join('')}
         
         <div style="border-top:1px solid var(--border-light); margin-top:0.75rem; padding-top:0.75rem;">
           <div class="summary-row">
@@ -616,6 +722,11 @@ function openCheckoutModal() {
             </div>
           </div>
 
+          <div class="form-group" style="margin-top:0.5rem;">
+            <label style="font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:0.4rem;">Special Requirements / Order Notes</label>
+            <textarea id="checkoutCustomerNote" rows="2" class="form-control" placeholder="Any specific requirements for your order?"></textarea>
+          </div>
+
           <button type="submit" id="placeOrderBtn" class="btn-primary" style="margin-top:0.5rem; width:100%;">PAY WITH RAZORPAY</button>
         </div>
       </form>
@@ -639,7 +750,7 @@ async function handlePincodeInput(inputEl) {
   const totalAmountEl = document.getElementById('checkoutTotalAmount');
   const cityInput = document.getElementById('checkoutCity');
   const stateInput = document.getElementById('checkoutState');
-  const subtotal = cart.reduce((sum, i) => sum + i.product.price * i.qty, 0);
+  const subtotal = cart.reduce((sum, i) => sum + getCartItemUnitPrice(i) * i.qty, 0);
 
   if (pincodeDebounceTimer) {
     clearTimeout(pincodeDebounceTimer);
@@ -745,6 +856,8 @@ async function handlePlaceOrder(e) {
   const address = addressInput ? addressInput.value.trim() : '';
   const city = (cityInput && cityInput.value.trim()) || currentDeliveryInfo.city;
   const state = (stateInput && stateInput.value.trim()) || currentDeliveryInfo.state;
+  const customerNoteInput = document.getElementById('checkoutCustomerNote');
+  const customerNote = customerNoteInput ? customerNoteInput.value.trim() : '';
 
   if (!name) {
     alert('Please enter your full name.');
@@ -798,13 +911,14 @@ async function handlePlaceOrder(e) {
           state: state,
           pincode: currentDeliveryInfo.pincode
         },
+        customerNote: customerNote,
         items: cart.map(i => ({
           productId: i.product.id,
           productName: i.product.name,
           productImage: (i.product.images && i.product.images[0]) || '',
           size: i.size,
           quantity: i.qty,
-          unitPrice: i.product.price
+          unitPrice: getCartItemUnitPrice(i)
         }))
       })
     });
@@ -903,8 +1017,9 @@ async function handlePlaceOrder(e) {
               image: (i.product.images && i.product.images[0]) || '',
               size: i.size,
               quantity: i.qty,
-              price: i.product.price
+              price: getCartItemUnitPrice(i)
             })),
+            customerNote: customerNote,
             subtotal: orderData.subtotal,
             delivery: orderData.deliveryCharge,
             total: orderData.total,

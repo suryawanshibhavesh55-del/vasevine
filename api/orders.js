@@ -70,7 +70,9 @@ module.exports = async (req, res) => {
         items,
         subtotal,
         deliveryCharge,
-        total
+        total,
+        customerNote,
+        orderNotes
       } = req.body || {};
 
       if (!customer || !customer.mobile || !shippingAddress || !items || !Array.isArray(items) || items.length === 0) {
@@ -114,6 +116,7 @@ module.exports = async (req, res) => {
           state: shippingAddress.state || '',
           pincode: shippingAddress.pincode || ''
         },
+        customerNote: (customerNote || orderNotes || '').trim() || null,
         items: orderSnapshotItems,
         subtotal: Number(subtotal) || 0,
         deliveryCharge: Number(deliveryCharge) || 500,
