@@ -319,6 +319,11 @@ function openOrderModal(orderId) {
       <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem;">
         <span>Subtotal:</span><span>\u20B9${(order.subtotal || 0).toLocaleString('en-IN')}</span>
       </div>
+      ${(order.discount && order.discount > 0) ? `
+      <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem; color:#047857; font-weight:500;">
+        <span>Discount (${escapeHtml(order.promoCode || 'VASEVINE26')}):</span><span>-\u20B9${Number(order.discount).toLocaleString('en-IN')}</span>
+      </div>
+      ` : ''}
       <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem;">
         <span>Delivery Charge:</span><span>\u20B9${(order.deliveryCharge || 0).toLocaleString('en-IN')}</span>
       </div>

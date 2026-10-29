@@ -80,6 +80,114 @@ function getCartItemUnitPrice(item) {
   return 0;
 }
 
+// Diwali Promotional Offer Configuration
+const PROMO_CONFIG = {
+  CODE: 'VASEVINE26',
+  DISCOUNT: 2000,
+  ACTIVE: true
+};
+
+function isValidPromoCode(code) {
+  if (!code || !PROMO_CONFIG.ACTIVE) return false;
+  return String(code).trim().toUpperCase() === PROMO_CONFIG.CODE;
+}
+
+function calculateOrderDiscount(promoCode, subtotal) {
+  if (!isValidPromoCode(promoCode)) return 0;
+  const numSubtotal = Math.max(0, Number(subtotal) || 0);
+  if (numSubtotal === 0) return 0;
+  return Math.min(numSubtotal, PROMO_CONFIG.DISCOUNT);
+}
+
+let appliedPromoCode = localStorage.getItem('vasevine_promo') || null;
+if (appliedPromoCode && !isValidPromoCode(appliedPromoCode)) {
+  appliedPromoCode = null;
+  localStorage.removeItem('vasevine_promo');
+}
+
+function applyPromoCode(rawCode) {
+  const code = (rawCode || '').trim();
+  if (!isValidPromoCode(code)) {
+    return { success: false, error: 'Invalid promo code' };
+  }
+  appliedPromoCode = PROMO_CONFIG.CODE;
+  localStorage.setItem('vasevine_promo', appliedPromoCode);
+  updateAllPromoUI();
+  showToast('✓ Diwali offer applied — ₹2,000 off your order');
+  return { success: true };
+}
+
+function removePromoCode(event) {
+  if (event) event.stopPropagation();
+  appliedPromoCode = null;
+  localStorage.removeItem('vasevine_promo');
+  updateAllPromoUI();
+  showToast('Promo code removed.');
+}
+
+function updateAllPromoUI() {
+  if (typeof renderShopGrid === 'function') renderShopGrid();
+  if (selectedHomepageCategory && typeof handleCategoryCardClick === 'function') {
+    handleCategoryCardClick(selectedHomepageCategory);
+  }
+  if (typeof renderCartDrawer === 'function') renderCartDrawer();
+  const checkoutModal = document.getElementById('checkoutModal');
+  if (checkoutModal && checkoutModal.classList.contains('active')) {
+    openCheckoutModal();
+  }
+}
+
+function toggleCardPromo(event, productId) {
+  if (event) event.stopPropagation();
+  const box = document.getElementById(`cardPromoBox-${productId}`);
+  if (box) {
+    const isHidden = box.style.display === 'none';
+    box.style.display = isHidden ? 'block' : 'none';
+    if (isHidden) {
+      const inp = document.getElementById(`cardPromoInput-${productId}`);
+      if (inp) {
+        inp.focus();
+        inp.value = PROMO_CONFIG.CODE;
+      }
+    }
+  }
+}
+
+function applyPromoFromCard(productId) {
+  const inp = document.getElementById(`cardPromoInput-${productId}`);
+  const fb = document.getElementById(`cardPromoFeedback-${productId}`);
+  const val = inp ? inp.value.trim() : '';
+  const res = applyPromoCode(val);
+  if (!res.success) {
+    if (fb) {
+      fb.className = 'card-promo-feedback error';
+      fb.textContent = res.error || 'Invalid promo code';
+    }
+  }
+}
+
+function handleApplyCartPromo() {
+  const inp = document.getElementById('cartPromoInput');
+  const fb = document.getElementById('cartPromoFeedback');
+  const val = inp ? inp.value.trim() : '';
+  const res = applyPromoCode(val);
+  if (!res.success && fb) {
+    fb.style.color = '#DC2626';
+    fb.textContent = res.error || 'Invalid promo code';
+  }
+}
+
+function handleApplyCheckoutPromo() {
+  const inp = document.getElementById('checkoutPromoInput');
+  const fb = document.getElementById('checkoutPromoFeedback');
+  const val = inp ? inp.value.trim() : '';
+  const res = applyPromoCode(val);
+  if (!res.success && fb) {
+    fb.style.color = '#DC2626';
+    fb.textContent = res.error || 'Invalid promo code';
+  }
+}
+
 let activeCategory = 'All Collections';
 let selectedHomepageCategory = null;
 let selectedProduct = null;
@@ -212,6 +320,29 @@ function clearCategorySelection() {
 
 // Reusable Product Card HTML Generator
 function renderProductCardHtml(product) {
+  const isPromoApplied = Boolean(appliedPromoCode);
+  const promoMarkup = isPromoApplied
+    ? `
+      <div class="card-promo-applied" onclick="event.stopPropagation()">
+        <span>✓ <strong>${appliedPromoCode}</strong> &bull; ₹2,000 off</span>
+        <button type="button" class="card-promo-remove-link" onclick="removePromoCode(event)">Remove</button>
+      </div>
+    `
+    : `
+      <div class="card-promo-wrapper" onclick="event.stopPropagation()">
+        <button type="button" class="card-promo-toggle" onclick="toggleCardPromo(event, '${product.id}')">
+          Apply Diwali Code
+        </button>
+        <div id="cardPromoBox-${product.id}" class="card-promo-box" style="display:none;">
+          <div class="card-promo-row">
+            <input type="text" id="cardPromoInput-${product.id}" class="card-promo-input" placeholder="VASEVINE26" onkeydown="if(event.key==='Enter'){event.preventDefault();applyPromoFromCard('${product.id}');}" />
+            <button type="button" class="card-promo-apply-btn" onclick="applyPromoFromCard('${product.id}')">APPLY</button>
+          </div>
+          <div id="cardPromoFeedback-${product.id}" class="card-promo-feedback"></div>
+        </div>
+      </div>
+    `;
+
   return `
     <div class="product-card" onclick="openProductModal('${product.id}')">
       <div class="product-image-box">
@@ -225,6 +356,7 @@ function renderProductCardHtml(product) {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
           + Add to Cart
         </button>
+        ${promoMarkup}
       </div>
     </div>
   `;
@@ -341,6 +473,9 @@ function openProductModal(productId) {
           <span class="detail-price">₹${initialPrice.toLocaleString('en-IN')}</span>
         </div>
         <div id="sizeSurchargeNotice" style="display:none; font-size:0.8rem; color:var(--text-muted); margin-top:-0.5rem; margin-bottom:1rem;"></div>
+        <div style="font-size:0.75rem; letter-spacing:0.04em; color:#92400E; background:rgba(212, 175, 55, 0.12); padding:3px 8px; border-radius:3px; display:inline-block; margin-bottom:0.75rem;">
+          Diwali Gesture: Use <strong>VASEVINE26</strong> for ₹2,000 off at checkout
+        </div>
         <p class="detail-desc">${selectedProduct.description}</p>
         
         <div class="size-selector">
@@ -503,7 +638,7 @@ function closeCartDrawer() {
 
 function renderCartDrawer() {
   const container = document.getElementById('cartDrawerBody');
-  const subtotalEl = document.getElementById('cartSubtotal');
+  const footer = document.querySelector('.drawer-footer');
   if (!container) return;
 
   if (cart.length === 0) {
@@ -514,7 +649,16 @@ function renderCartDrawer() {
         <button class="btn-outline" style="margin-top:1.5rem;" onclick="closeCartDrawer()">CONTINUE SHOPPING</button>
       </div>
     `;
-    if (subtotalEl) subtotalEl.textContent = '₹0';
+    if (footer) {
+      footer.innerHTML = `
+        <div class="subtotal-row">
+          <span>Subtotal</span>
+          <span id="cartSubtotal">₹0</span>
+        </div>
+        <p style="font-size:0.75rem; color:var(--text-muted);">Taxes & shipping calculated at checkout</p>
+        <button id="proceedCheckoutBtn" class="btn-primary" style="width:100%;" disabled>PROCEED TO CHECKOUT</button>
+      `;
+    }
     return;
   }
 
@@ -545,7 +689,37 @@ function renderCartDrawer() {
     `;
   }).join('');
 
-  if (subtotalEl) subtotalEl.textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+  const discount = calculateOrderDiscount(appliedPromoCode, subtotal);
+  const totalAfterDiscount = Math.max(0, subtotal - discount);
+
+  if (footer) {
+    footer.innerHTML = `
+      <div class="subtotal-row">
+        <span>Subtotal</span>
+        <span id="cartSubtotal">₹${subtotal.toLocaleString('en-IN')}</span>
+      </div>
+      ${discount > 0 ? `
+        <div class="subtotal-row" style="color:#047857; margin-top:0.35rem; font-size:0.9rem;">
+          <span>Diwali Offer (${appliedPromoCode})</span>
+          <span>-₹${discount.toLocaleString('en-IN')} <button type="button" class="card-promo-remove-link" onclick="removePromoCode(event)" style="margin-left:4px;">(Remove)</button></span>
+        </div>
+        <div class="subtotal-row" style="font-weight:700; margin-top:0.5rem; border-top:1px solid var(--border-light); padding-top:0.5rem;">
+          <span>Estimated Total</span>
+          <span>₹${totalAfterDiscount.toLocaleString('en-IN')}</span>
+        </div>
+      ` : `
+        <div style="margin:0.6rem 0 0.4rem 0;">
+          <div style="display:flex; gap:6px;">
+            <input type="text" id="cartPromoInput" class="form-control" placeholder="Promo code (VASEVINE26)" style="font-size:0.75rem; padding:4px 8px; text-transform:uppercase;" onkeydown="if(event.key==='Enter'){event.preventDefault();handleApplyCartPromo();}" />
+            <button type="button" class="btn-outline" style="padding:4px 10px; font-size:0.75rem;" onclick="handleApplyCartPromo()">APPLY</button>
+          </div>
+          <div id="cartPromoFeedback" style="font-size:0.72rem; margin-top:3px;"></div>
+        </div>
+      `}
+      <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">Taxes & shipping calculated at checkout</p>
+      <button id="proceedCheckoutBtn" class="btn-primary" style="width:100%; margin-top:0.5rem;" onclick="closeCartDrawer(); openCheckoutModal();">PROCEED TO CHECKOUT</button>
+    `;
+  }
 }
 
 function updateCartItemQty(index, delta) {
@@ -650,6 +824,8 @@ function openCheckoutModal() {
 
   currentDeliveryInfo = null;
   const subtotal = cart.reduce((sum, i) => sum + getCartItemUnitPrice(i) * i.qty, 0);
+  const discount = calculateOrderDiscount(appliedPromoCode, subtotal);
+  const subtotalAfterDiscount = Math.max(0, subtotal - discount);
 
   container.innerHTML = `
     <button class="modal-close-btn" onclick="closeCheckoutModal()">&times;</button>
@@ -673,13 +849,27 @@ function openCheckoutModal() {
             <span>Subtotal</span>
             <span id="checkoutSubtotal">₹${subtotal.toLocaleString('en-IN')}</span>
           </div>
+          ${discount > 0 ? `
+          <div class="summary-row" style="color:#047857;">
+            <span>Discount (${appliedPromoCode})</span>
+            <span>-₹${discount.toLocaleString('en-IN')} <button type="button" class="card-promo-remove-link" onclick="removePromoCode(event); openCheckoutModal();">(Remove)</button></span>
+          </div>
+          ` : `
+          <div style="margin: 0.5rem 0;">
+            <div style="display:flex; gap:6px;">
+              <input type="text" id="checkoutPromoInput" class="form-control" placeholder="Promo code (VASEVINE26)" style="font-size:0.75rem; padding:5px 8px; text-transform:uppercase;" onkeydown="if(event.key==='Enter'){event.preventDefault();handleApplyCheckoutPromo();}" />
+              <button type="button" class="btn-outline" style="padding:4px 10px; font-size:0.75rem;" onclick="handleApplyCheckoutPromo()">APPLY</button>
+            </div>
+            <div id="checkoutPromoFeedback" style="font-size:0.72rem; margin-top:3px;"></div>
+          </div>
+          `}
           <div class="summary-row">
             <span id="checkoutDeliveryLabel">Delivery</span>
             <span id="checkoutDeliveryAmount" style="color:var(--text-muted); font-size:0.85rem;">Enter PIN code</span>
           </div>
           <div class="summary-row" style="border-top:1px solid var(--border-light); margin-top:0.5rem; padding-top:0.5rem; font-size:1.15rem;">
             <strong>Total</strong>
-            <strong id="checkoutTotalAmount">₹${subtotal.toLocaleString('en-IN')}</strong>
+            <strong id="checkoutTotalAmount">₹${subtotalAfterDiscount.toLocaleString('en-IN')}</strong>
           </div>
         </div>
       </div>
@@ -751,6 +941,8 @@ async function handlePincodeInput(inputEl) {
   const cityInput = document.getElementById('checkoutCity');
   const stateInput = document.getElementById('checkoutState');
   const subtotal = cart.reduce((sum, i) => sum + getCartItemUnitPrice(i) * i.qty, 0);
+  const discount = calculateOrderDiscount(appliedPromoCode, subtotal);
+  const subtotalAfterDiscount = Math.max(0, subtotal - discount);
 
   if (pincodeDebounceTimer) {
     clearTimeout(pincodeDebounceTimer);
@@ -769,7 +961,7 @@ async function handlePincodeInput(inputEl) {
       deliveryAmountEl.style.color = 'var(--text-muted)';
     }
     if (totalAmountEl) {
-      totalAmountEl.textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+      totalAmountEl.textContent = `₹${subtotalAfterDiscount.toLocaleString('en-IN')}`;
     }
     return;
   }
@@ -809,7 +1001,7 @@ async function handlePincodeInput(inputEl) {
         deliveryAmountEl.style.color = 'var(--text-main)';
       }
       if (totalAmountEl) {
-        const finalTotal = subtotal + result.deliveryCharge;
+        const finalTotal = subtotalAfterDiscount + result.deliveryCharge;
         totalAmountEl.textContent = `₹${finalTotal.toLocaleString('en-IN')}`;
       }
     } else {
@@ -824,7 +1016,7 @@ async function handlePincodeInput(inputEl) {
         deliveryAmountEl.style.color = 'var(--text-muted)';
       }
       if (totalAmountEl) {
-        totalAmountEl.textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+        totalAmountEl.textContent = `₹${subtotalAfterDiscount.toLocaleString('en-IN')}`;
       }
     }
   }, 250);
@@ -912,6 +1104,7 @@ async function handlePlaceOrder(e) {
           pincode: currentDeliveryInfo.pincode
         },
         customerNote: customerNote,
+        promoCode: appliedPromoCode,
         items: cart.map(i => ({
           productId: i.product.id,
           productName: i.product.name,
@@ -1020,6 +1213,8 @@ async function handlePlaceOrder(e) {
               price: getCartItemUnitPrice(i)
             })),
             customerNote: customerNote,
+            promoCode: orderData.promoCode || appliedPromoCode,
+            discount: orderData.discount || discount,
             subtotal: orderData.subtotal,
             delivery: orderData.deliveryCharge,
             total: orderData.total,
@@ -1045,6 +1240,10 @@ async function handlePlaceOrder(e) {
           const storedOrders = JSON.parse(localStorage.getItem('vasevine_orders')) || [];
           storedOrders.unshift(confirmedOrder);
           localStorage.setItem('vasevine_orders', JSON.stringify(storedOrders));
+
+          appliedPromoCode = null;
+          localStorage.removeItem('vasevine_promo');
+          updateAllPromoUI();
 
           if (container) {
             container.innerHTML = `
@@ -1074,6 +1273,12 @@ async function handlePlaceOrder(e) {
                     <span style="color:var(--text-muted);">Delivery Charge:</span>
                     <strong>₹${orderData.deliveryCharge.toLocaleString('en-IN')}</strong>
                   </div>
+                  ${orderData.discount > 0 ? `
+                  <div style="display:flex; justify-content:space-between; margin-bottom:0.4rem; color:#15803D;">
+                    <span>Diwali Discount (${orderData.promoCode || 'VASEVINE26'}):</span>
+                    <strong>-₹${orderData.discount.toLocaleString('en-IN')}</strong>
+                  </div>
+                  ` : ''}
                   <div style="display:flex; justify-content:space-between; border-top:1px solid var(--border-light); padding-top:0.5rem; margin-top:0.5rem; font-size:1.05rem;">
                     <strong>Total Paid:</strong>
                     <strong>₹${orderData.total.toLocaleString('en-IN')}</strong>

@@ -5,7 +5,7 @@ const { validateDeliveryPincode } = require('../../lib/delivery');
 const { PRODUCTS } = require('../../js/products');
 const { ObjectId } = require('mongodb');
 const { sendOrderNotificationEmail } = require('../../lib/email');
-const { calculateProductPrice } = require('../../lib/pricing');
+const { calculateProductPrice, calculateOrderDiscount, PROMO_CONFIG } = require('../../lib/pricing');
 
 function buildIdQuery(rawId) {
   if (!rawId) return { _id: null };
@@ -102,10 +102,13 @@ async function handleCreateOrder(req, res) {
       shippingAddress,
       items,
       customerNote,
-      orderNotes
+      orderNotes,
+      promoCode,
+      couponCode
     } = req.body || {};
 
     const cleanCustomerNote = (customerNote || orderNotes || '').trim() || null;
+    const cleanPromoCode = (promoCode || couponCode || '').trim();
 
     // 1. Validate customer details
     if (!customer || !customer.name || !customer.mobile) {
@@ -224,9 +227,12 @@ async function handleCreateOrder(req, res) {
       });
     }
 
-    // 5. Calculate final payable total including server-validated delivery
+    // 5. Server-side authoritative discount and total calculation
+    const discount = calculateOrderDiscount(cleanPromoCode, subtotal);
+    const appliedPromoCode = discount > 0 ? PROMO_CONFIG.CODE : null;
+    const subtotalAfterDiscount = Math.max(0, subtotal - discount);
     const deliveryCharge = Number(deliveryValidation.deliveryCharge);
-    const finalTotal = subtotal + deliveryCharge;
+    const finalTotal = subtotalAfterDiscount + deliveryCharge;
     const amountInPaise = Math.round(finalTotal * 100);
 
     // 6. Generate local order ID
@@ -245,7 +251,8 @@ async function handleCreateOrder(req, res) {
         notes: {
           localOrderId,
           customerName: customer.name.trim(),
-          customerMobile: cleanMobile
+          customerMobile: cleanMobile,
+          promoCode: appliedPromoCode || 'none'
         }
       });
     } catch (rzpErr) {
@@ -287,6 +294,8 @@ async function handleCreateOrder(req, res) {
       customerNote: cleanCustomerNote,
       items: orderSnapshotItems,
       subtotal,
+      promoCode: appliedPromoCode,
+      discount,
       deliveryCharge,
       total: finalTotal,
       currency: 'INR',
@@ -328,6 +337,8 @@ async function handleCreateOrder(req, res) {
       },
       shippingAddress: newOrder.shippingAddress,
       subtotal,
+      discount,
+      promoCode: appliedPromoCode,
       deliveryCharge,
       total: finalTotal
     });

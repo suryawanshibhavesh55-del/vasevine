@@ -133,6 +133,39 @@ img {
   color: #FFFFFF;
 }
 
+/* Top Announcement Bar (Diwali) */
+.top-announcement-bar {
+  background-color: #111111;
+  color: #FAF9F6;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  padding: 7px 0;
+  text-align: center;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.4);
+}
+.announcement-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.announcement-content strong {
+  color: #D4AF37;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+.announcement-mobile {
+  display: none;
+}
+@media (max-width: 640px) {
+  .announcement-desktop {
+    display: none;
+  }
+  .announcement-mobile {
+    display: inline;
+    font-size: 0.74rem;
+  }
+}
+
 /* Navigation Bar */
 .navbar {
   position: sticky;
@@ -610,6 +643,120 @@ img {
 .add-to-cart-btn:hover {
   color: var(--text-main);
   font-weight: 600;
+}
+
+/* Product Card Diwali Promo Option */
+.card-promo-wrapper {
+  margin-top: 0.4rem;
+  width: 100%;
+}
+
+.card-promo-toggle {
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: #B45309;
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px dashed rgba(212, 175, 55, 0.6);
+  padding: 3px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.card-promo-toggle:hover {
+  background: rgba(212, 175, 55, 0.22);
+  color: #78350F;
+}
+
+.card-promo-box {
+  margin-top: 5px;
+  background: #FFFFFF;
+  border: 1px solid var(--border-light);
+  padding: 6px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.card-promo-row {
+  display: flex;
+  gap: 4px;
+}
+
+.card-promo-input {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  padding: 4px 6px;
+  border: 1px solid var(--border-light);
+  border-radius: 2px;
+  font-family: inherit;
+}
+
+.card-promo-input:focus {
+  outline: none;
+  border-color: var(--text-main);
+}
+
+.card-promo-apply-btn {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  background: var(--text-main);
+  color: #FFFFFF;
+  padding: 4px 10px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  transition: var(--transition-smooth);
+}
+
+.card-promo-apply-btn:hover {
+  background: #333333;
+}
+
+.card-promo-feedback {
+  font-size: 0.7rem;
+  margin-top: 4px;
+}
+
+.card-promo-feedback.error {
+  color: #DC2626;
+}
+
+.card-promo-feedback.success {
+  color: #16A34A;
+}
+
+.card-promo-applied {
+  margin-top: 0.35rem;
+  font-size: 0.72rem;
+  color: #047857;
+  background: #ECFDF5;
+  border: 1px solid #A7F3D0;
+  padding: 3px 8px;
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.card-promo-remove-link {
+  font-size: 0.7rem;
+  color: #991B1B;
+  text-decoration: underline;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  font-weight: 500;
+}
+
+.card-promo-remove-link:hover {
+  color: #DC2626;
 }
 
 /* Category Filter Tabs */

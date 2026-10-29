@@ -1,5 +1,6 @@
 const { getDatabase } = require('../lib/mongodb');
 const { sendOrderNotificationEmail } = require('../lib/email');
+const { calculateOrderDiscount, PROMO_CONFIG } = require('../lib/pricing');
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -72,8 +73,17 @@ module.exports = async (req, res) => {
         deliveryCharge,
         total,
         customerNote,
-        orderNotes
+        orderNotes,
+        promoCode,
+        couponCode
       } = req.body || {};
+
+      const rawPromo = (promoCode || couponCode || '').trim();
+      const numSubtotal = Number(subtotal) || 0;
+      const calculatedDiscount = calculateOrderDiscount(rawPromo, numSubtotal);
+      const appliedPromo = calculatedDiscount > 0 ? PROMO_CONFIG.CODE : null;
+      const numDelivery = Number(deliveryCharge) || 500;
+      const finalTotal = Math.max(0, numSubtotal - calculatedDiscount) + numDelivery;
 
       if (!customer || !customer.mobile || !shippingAddress || !items || !Array.isArray(items) || items.length === 0) {
         return res.status(400).json({
@@ -118,9 +128,11 @@ module.exports = async (req, res) => {
         },
         customerNote: (customerNote || orderNotes || '').trim() || null,
         items: orderSnapshotItems,
-        subtotal: Number(subtotal) || 0,
-        deliveryCharge: Number(deliveryCharge) || 500,
-        total: Number(total) || (Number(subtotal) + Number(deliveryCharge)),
+        subtotal: numSubtotal,
+        promoCode: appliedPromo,
+        discount: calculatedDiscount,
+        deliveryCharge: numDelivery,
+        total: finalTotal,
         // Payment fields (prepared for Razorpay)
         paymentStatus: 'Pending',
         paymentGateway: 'Razorpay',
